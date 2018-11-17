@@ -1,4 +1,4 @@
-# vue-henkel
+# vue-henkel-ver-2
 
 ## Project setup
 ```
