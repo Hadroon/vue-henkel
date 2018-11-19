@@ -1,5 +1,5 @@
 <template>
-      <div class="wrapper">
+  <div class="wrapper">
     <div class="header">
       <a href="/#forms" style="float:left;">
         <img style="max-width: 200px; margin-top: 4px;" src="@/assets/ap.jpg" alt="">
@@ -21,95 +21,10 @@
       </div>
       <div id="forms" class="anchor"></div>
       <div class="relative">
-        <div id="logic">
-          <div class="left">
-
-
-          </div>
-          <div></div>
-        </div>
         <div id="logic" class="grid-forms">
-          <div class="left">
-            <h1 style="text-align: center;">Regisztráció</h1>
-            <form id="registration" action="/signup" method="post">
-              <table style="width:100%">
-                <tr>
-                  <td>
-                    <legend>Vezetéknév:</legend>
-                    <input type="text" value="">
-                  </td>
-                  <td>
-                    <legend>Keresztnév:</legend>
-                    <input type="text" value="">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <legend>Irányítószám:</legend>
-                    <input type="text" value="">
-                  </td>
-                  <td>
-                    <legend>Település:</legend>
-                    <input type="text" value="">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <legend>Utca:</legend>
-                    <input type="text" value="">
-                  </td>
-                  <td>
-                    <legend>Házszám:</legend>
-                    <input type="text" value="">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <legend>Telefon:</legend>
-                    <span>+36 </span><input style="width: 80%;" type="text" value="">
-                  </td>
-                  <td>
-                    <legend>Email:</legend>
-                    <input type="text" value="" name="email">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <legend>Jelszó:</legend>
-                    <input type="text" value="" name="password">
-                  </td>
-                  <td>
-                    <legend>Jelszó megerősítése:</legend>
-                    <input type="text" value="" name="passwordtwo">
-                  </td>
-                </tr>
-              </table>
-              <p><input type="checkbox" name="eula" value="1"> Elolvastam és elfogadom a <a href="#">Szabályzatot</a>,
-                valamint az <a href="#">Adatvédelmi tájékoztatót</a>.</p>
-              <p><input type="checkbox" name="gdpr" value="1"> Nyilatokzom, hogy elmúltam 18 éves.</p>
-              <div style="align-items: center;">
-                <!-- <input id="regbutt" style="margin: 0px auto" type="submit" value="Regisztráció"> -->
-                <button id="regbutt" type="submit" form="registration" value="Submit">Submit</button>
-              </div>
-            </form>
-          </div>
-          <div class="right">
-            <h1 style="text-align: center;">Belépés</h1>
-            <form action="/login" method="post">
-              <div class="form-group">
-                <legend>Email</legend>
-                <input type="text" class="form-control" name="email">
-              </div>
-              <div class="form-group">
-                <legend>Jelszó</legend>
-                <input type="password" class="form-control" name="password">
-              </div>
-              <button style="item-align: center;" type="submit" class="btn btn-warning btn-lg">Belépés</button>
-            </form>
-            <p><a id="forgot" href="/forgot">Elfelejtett jelszó</a></p>
-          </div>
+            <RegistrationForm />
+            <LogInForm />
         </div>
-        <!-- <div style="clear: both;"> </div> -->
       </div>
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt="">
@@ -125,8 +40,15 @@
 </template>
 
 <script>
+import RegistrationForm from './RegistrationForm';
+import LogInForm from './LogInForm'
+
 export default {
-    name: 'MainView'
+    name: 'MainView',
+    components: {
+        RegistrationForm,
+        LogInForm
+    }
 }
 </script>
 
@@ -189,14 +111,13 @@ a:target:before {
 }
 
 .left {
-  /* width: 50%; */
-  /* float: left; */
   grid-area: left;
-  padding-bottom: 100px;
+  padding: 35px 15px 55px 15px;
 }
 
 .right {
   grid-area: right;
+  padding: 35px 15px 100px 15px;
 }
 
 .separator {

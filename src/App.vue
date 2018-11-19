@@ -13,7 +13,6 @@ import MainView from './components/MainView.vue';
 export default {
   name: 'app',
   components: {
-    // HelloWorld,
     MainView
   }
 }
