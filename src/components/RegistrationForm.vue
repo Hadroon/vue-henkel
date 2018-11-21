@@ -59,7 +59,8 @@
               <p><input type="checkbox" name="gdpr" value="1" v-model="user.correctAge"> Nyilatokzom, hogy elmúltam 18 éves.</p>
               <div style="align-items: center;">
                 <!-- <input id="regbutt" style="margin: 0px auto" type="submit" value="Regisztráció"> -->
-                <button id="regbutt" form="registration" value="Submit">Regisztráció</button>
+                <!-- <button id="regbutt" form="registration" value="Submit">Regisztráció</button> -->
+                <button id="regbutt" @click="handleSubmit">Regisztráció</button>
               </div>
             </form>
     </div>
@@ -76,9 +77,19 @@ export default {
     }
   },
   methods: {
-    handleSubmit(e){
+    handleSubmit: async function(e){
       e.preventDefault();
-      
+      await this.$http.post('http://localhost:8080/reg', {
+      user: this.user
+      })
+      .then(response => {
+        console.log('koszi az adatot');
+        this.user.auth = response.data.auth;
+          })
+          .catch(function (error) {
+              console.error(error.response);
+          });
+
     }
   }
 };

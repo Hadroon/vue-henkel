@@ -45,18 +45,11 @@ export default {
       password: this.user.password
       })
       .then(response => {
-        console.log('ez a response');
-        console.log(response);
-
-        console.log('response.data.auth');
-        console.log(response.data.auth);
         this.user.auth = response.data.auth;
           })
           .catch(function (error) {
               console.error(error.response);
           });
-
-
     }
   }
 };
