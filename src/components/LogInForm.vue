@@ -4,11 +4,11 @@
     <form action="/login" method="post">
       <div class="form-group">
         <legend>Email</legend>
-        <input type="text" class="form-control" name="email" v-model="email">
+        <input type="text" class="form-control" name="email" v-model="user.email">
       </div>
       <div class="form-group">
         <legend>Jelszó</legend>
-        <input type="password" class="form-control" name="password" v-model="password">
+        <input type="password" class="form-control" name="password" v-model="user.password">
       </div>
       <button style="item-align: center;" type="submit" class="btn btn-warning btn-lg" @click="handleSubmit">Belépés</button>
     </form>
@@ -23,17 +23,21 @@
 export default {
   name: "LogInForm",
   props: {
-    email: {
-      type: String
-    },
-    password: {
-      type: String
+    user: {
+      type: Object
+    }
+  },
+  data() {
+    return {
     }
   },
   methods: {
     handleSubmit: function(e){
+      this.user.email = '';
+      this.user.password = '';
       e.preventDefault();
-      this.$emit('sendingData', this.email)
+      // alert(this.user.email)
+      // this.$emit('sendingData', this.user.email)
     }
   }
 };
