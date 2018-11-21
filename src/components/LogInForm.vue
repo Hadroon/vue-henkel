@@ -37,10 +37,10 @@ export default {
       this.user.password = '';
       e.preventDefault();
     },
-    handleSubmit(e){
+    handleSubmit: async function(e){
       e.preventDefault();
 
-      this.$http.post('http://localhost:8080/login', {
+      await this.$http.post('http://localhost:8080/login', {
       email: this.user.email,
       password: this.user.password
       })
