@@ -22,12 +22,12 @@
       <div id="forms" class="anchor"></div>
       <div class="relative">
         <div id="logic" class="grid-forms">
-            <RegistrationForm />
 
+            <RegistrationForm v-bind:user="user" />
+
+            <!-- <LogInForm v-if="this.user.auth === false" v-bind:user="user" v-on:sendingData="upDate($event)" /> -->
             <LogInForm v-bind:user="user" v-on:sendingData="upDate($event)" />
-            <!-- <div v-else class="right">
-              <p>belépve: {{email}}</p>
-            </div> -->
+
 
         </div>
       </div>
@@ -38,7 +38,12 @@
       </div>
 
       <div>4</div>
-      <div>5</div>
+      <div>
+                    
+        <p v-if="user.auth === true">belépve: {{user.email}}</p>
+        <p v-if="user.auth === false">Nincs belpve.</p>
+            
+      </div>
       <div class="box footer">Footer</div>
     </div>
   </div>
@@ -57,9 +62,20 @@ export default {
     data() {
       return {
         user: {
-          authenticated: false,
+          auth: false,
+          roles: [],
           email: '',
-          password: ''
+          password: '',
+          passwordTwo: '',
+          firstName: '',
+          lastName: '',
+          zipCode: null,
+          city: '',
+          street: '',
+          houseNumber: null,
+          phoneNumber: null,
+          acceptedToU: false,
+          correctAge: false
         }
       }
     },

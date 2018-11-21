@@ -10,7 +10,7 @@
         <legend>Jelszó</legend>
         <input type="password" class="form-control" name="password" v-model="user.password">
       </div>
-      <button style="item-align: center;" type="submit" class="btn btn-warning btn-lg" @click="handleSubmit">Belépés</button>
+      <button style="item-align: center;" class="btn btn-warning btn-lg" @click="handleSubmit">Belépés</button>
     </form>
     <p>
       <a id="forgot" href="/forgot">Elfelejtett jelszó</a>
@@ -32,12 +32,31 @@ export default {
     }
   },
   methods: {
-    handleSubmit: function(e){
+    handleSubmitSajat: function(e){
       this.user.email = '';
       this.user.password = '';
       e.preventDefault();
-      // alert(this.user.email)
-      // this.$emit('sendingData', this.user.email)
+    },
+    handleSubmit(e){
+      e.preventDefault();
+
+      this.$http.post('http://localhost:8080/login', {
+      email: this.user.email,
+      password: this.user.password
+      })
+      .then(response => {
+        console.log('ez a response');
+        console.log(response);
+
+        console.log('response.data.auth');
+        console.log(response.data.auth);
+        this.user.auth = response.data.auth;
+          })
+          .catch(function (error) {
+              console.error(error.response);
+          });
+
+
     }
   }
 };
