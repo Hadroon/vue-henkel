@@ -23,7 +23,12 @@
       <div class="relative">
         <div id="logic" class="grid-forms">
             <RegistrationForm />
-            <LogInForm />
+
+            <LogInForm v-bind:email="email" v-on:sendingData="upDate($event)" />
+            <!-- <div v-else class="right">
+              <p>belépve: {{email}}</p>
+            </div> -->
+
         </div>
       </div>
       <div class="relative">
@@ -48,7 +53,18 @@ export default {
     components: {
         RegistrationForm,
         LogInForm
+    },
+    data() {
+      return {
+        email: '',
+        password: ''
+      }
+    },
+    methods: {
+      upDate: function(email){
+        this.email = email;
     }
+  }
 }
 </script>
 

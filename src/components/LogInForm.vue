@@ -22,21 +22,23 @@
 <script>
 export default {
   name: "LogInForm",
-  data() {
-    return {
-      email: '',
-      password: ''
-    };
+  props: {
+    email: {
+      type: String
+    },
+    password: {
+      type: String
+    }
   },
   methods: {
-    handleSubmit(e){
+    handleSubmit: function(e){
       e.preventDefault();
-      console.log(e);
-      alert('email: ' + this.email + ' password: ' + this.password);
+      this.$emit('sendingData', this.email)
     }
   }
 };
 </script>
+
 
 <style scoped>
 </style>

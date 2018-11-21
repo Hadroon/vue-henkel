@@ -66,9 +66,15 @@
 </template>
 
 
+
 <script>
 export default {
-  name: 'RegistrationForm'
+  name: 'RegistrationForm',
+  methods: {
+    handleSubmit(e){
+      e.preventDefault();
+    }
+  }
 };
 </script>
 

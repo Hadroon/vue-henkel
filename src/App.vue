@@ -7,7 +7,6 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue';
 import MainView from './components/MainView.vue';
 
 export default {
