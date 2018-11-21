@@ -72,7 +72,7 @@ export default {
           zipCode: null,
           city: '',
           street: '',
-          houseNumber: null,
+          houseNumber: '',
           phoneNumber: null,
           acceptedToU: false,
           correctAge: false

@@ -10,6 +10,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
+var User = require('./back/models/user');
+
+mongoose.connect('mongodb://localhost:27017/henkel-vue');
+
+const db = mongoose.connection;
+
 app = express();
 app.use(serveStatic(path.join(__dirname, 'dist')));
 const router = express.Router();
@@ -18,6 +24,7 @@ router.use(bodyParser.json());
 
 router.post('/login', function(req, res) {
     console.log(req.body.email);
+
     res.status(200).send({ auth: true, token: 'token', user: 'user' });
     // db.insert([
     //     req.body.name,
@@ -38,6 +45,24 @@ router.post('/login', function(req, res) {
 
 router.post('/reg', function(req, res) {
     console.log(req.body);
+
+    var user = new User();
+    user.email = 'na ez most egy email';
+
+    // User.create(req.body);
+    // user.save(function (err) {
+    //     if (err)
+    //         throw err;
+    //     return done(null, user);
+    // });
+
+    User.create(req.body.user, function (err, small) {
+        if (err) return handleError(err);
+        console.log('small');
+        console.log(small);
+
+        // saved!
+      });
     res.status(200).send({ auth: true, token: 'token', user: 'user' });
     // db.insert([
     //     req.body.name,
