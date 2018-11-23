@@ -5,6 +5,7 @@
         <img style="max-width: 200px; margin-top: 4px;" src="@/assets/ap.jpg" alt="">
       </a>
       <div class="nav">
+        <i style="color: green;" class="material-icons">happy</i>
         <a href="">Játékleírás</a>
         <a href="">Nyeremények</a>
         <a href="">Játékszabályzat</a>
@@ -23,7 +24,7 @@
       <div class="relative">
         <div id="logic" class="grid-forms">
 
-            <RegistrationForm v-bind:user="user" />
+            <RegistrationForm v-bind:user="user" :regErrorMessages="regErrorMessages" />
 
             <!-- <LogInForm v-if="this.user.auth === false" v-bind:user="user" v-on:sendingData="upDate($event)" /> -->
             <LogInForm v-bind:user="user" v-on:sendingData="upDate($event)" />
@@ -76,6 +77,13 @@ export default {
           phoneNumber: null,
           acceptedToU: false,
           correctAge: false
+        },
+        regErrorMessages: {
+          email: 'Kérlek ellenőrizd a megadott email címet.',
+          notSamePasswords: 'A jelszavaknak meg kell egyeznie.',
+          incorrectPassword: 'A jelszónak legalább 6 karakter hosszúnak kell lennie.',
+          notAcceptedConditions: 'Az oldal használatához a szabályzatot és az adatvédelmi szabályzatot is el kell fogadni.',
+          requiredFiels: 'Kérlek az összes mezőt töltsd ki.'
         }
       }
     },
@@ -121,15 +129,24 @@ div.anchor {
   visibility: hidden;
 }
 
-input {
-  border: none;
-  /* width: 90%; */
-}
-
 td > input {
   width: 90%;
   padding: 5px;
 }
+
+/* input::placeholder {
+  color: greey;
+  text-align: right;
+} */
+
+/* input:invalid {
+  border: 2px dashed green;
+} */
+
+/* input:valid {
+  border: 2px solid black;
+} */
+
 
 a:target:before {
   top: -500px;
@@ -263,6 +280,11 @@ a:target:before {
 
 #logic {
   margin-bottom: 20px;
+}
+
+.icon {
+  width: 20px;
+  color: green;
 }
 
 
