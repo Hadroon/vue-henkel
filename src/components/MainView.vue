@@ -64,19 +64,19 @@ export default {
       return {
         user: {
           auth: false,
-          roles: [],
-          email: '',
-          password: '',
-          passwordTwo: '',
-          firstName: '',
-          lastName: '',
+          roles: null,
+          email: null,
+          password: null,
+          passwordTwo: null,
+          firstName: null,
+          lastName: null,
           zipCode: null,
-          city: '',
-          street: '',
-          houseNumber: '',
+          city: null,
+          street: null,
+          houseNumber: null,
           phoneNumber: null,
-          acceptedToU: false,
-          correctAge: false
+          acceptedToU: null,
+          correctAge: null
         },
         regErrorMessages: {
           email: 'Kérlek ellenőrizd a megadott email címet.',

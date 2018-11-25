@@ -1,5 +1,12 @@
 <template>
-    <div class="left">
+    <div>
+      <div class="left" v-if="succesMessage">
+        <p>Köszönjük, hogy regisztráltál. A megadott email címre aktíváló levelet küldtünk.Kérünk a levélbe lévő linkre kattintva 
+          aktíváld regisztrációdat.
+        </p>
+      </div>
+
+    <div class="left" v-if="!succesMessage">
             <h1 style="text-align: center;">Regisztráció</h1>
             <!-- <div v-if="errors.length">
               <p :key="error" v-for="error in errors">{{ error }}</p>
@@ -91,22 +98,21 @@
                 valamint az <a href="#">Adatvédelmi tájékoztatót</a>.</p>
               <p><input type="checkbox" name="gdpr" value="1" v-model="user.correctAge"> Nyilatokzom, hogy elmúltam 18 éves.</p>
               <div style="align-items: center;">
-                <!-- <button disabled id="regbutt" @click="handleSubmit">Regisztráció</button> -->
                 <button id="regbutt" @click="handleSubmit">Regisztráció</button>
+                <!-- <button id="regbutt" :disabled="checkValami" @click="handleSubmit">Regisztráció</button> -->
               </div>
             </form>
+    </div>
     </div>
 </template>
 
 
 
 <script>
-import IinputField from './IinputField';
 
 export default {
   name: 'RegistrationForm',
     components: {
-      IinputField
     },
   props: {
     user: {
@@ -131,28 +137,22 @@ export default {
         phoneNumber: true,
         acceptedToU: true,
         correctAge: true
-      }
+      },
+      preventSendReg: false,
+      succesMessage: null, 
     }
   }, 
   methods: {
     handleSubmit: async function(e){
 
-      // for (var key in p) {
-      //   if (p.hasOwnProperty(key)) {
-      //       console.log(key + " -> " + p[key]);
-      //   }
-      // }
-
-
-
       this.errors = [];
 
-      if (!this.name) {
-        this.errors.push('Name required.');
-      }
-      if (!this.age) {
-        this.errors.push('Age required.');
-      }
+      // if (!this.name) {
+      //   this.errors.push('Name required.');
+      // }
+      // if (!this.age) {
+      //   this.errors.push('Age required.');
+      // }
       e.preventDefault();
       await this.$http.post('http://localhost:8080/reg', {
       user: this.user
@@ -182,16 +182,116 @@ export default {
       }
 
       e.preventDefault();
+    },
+
+    checkValami: function() {
+      for (var key in this.localUserError) {
+        // if (this.localUserError.hasOwnProperty(key)) {
+        //   console.log(key + " -> " + this.localUserError[key]);
+        if (this.localUserError[key] === true) return this.preventSendReg = true;
+        // }
+        // console.log(key);
+        // console.log(this.localUserError[key]);
+      }
+        // return this.preventSendReg = false;
+        this.$set(this.preventSendReg, 'b', 2);
     }
+  },
+  computed: {
+    // changeDisabledStatusOnRegButton: function() {
+    //     if (this.localUserError.some(val => val === false)) return this.preventSendReg = false;
+    // }
+
+    // checkValami: function() {
+    //   for (var key in this.localUserError) {
+    //     // if (this.localUserError.hasOwnProperty(key)) {
+    //     //   console.log(key + " -> " + this.localUserError[key]);
+    //     // if (localUserError[key] === true) return true;
+    //     // }
+    //     console.log(key);
+    //     console.log(this.localUserError.key);
+    //   }
+    //     return false
+    // }
   },
   watch: {
     user: {
       handler: function(val) {
-        if (val.firstName.length >= 4) {
+
+        if (val.firstName && val.firstName.length >= 4) {
           this.localUserError.firstName = false;
         } else {
           this.localUserError.firstName = true;
         }
+
+        if (val.lastName && val.lastName.length >= 4) {
+          this.localUserError.lastName = false;
+        } else {
+          this.localUserError.lastName = true;
+        }
+
+        if (val.zipCode && val.zipCode.length >= 4) {
+          this.localUserError.zipCode = false;
+        } else {
+          this.localUserError.zipCode = true;
+        }
+
+        if (val.city && val.city.length >= 4) {
+          this.localUserError.city = false;
+        } else {
+          this.localUserError.city = true;
+        }
+
+        if (val.street && val.street.length >= 4) {
+          this.localUserError.street = false;
+        } else {
+          this.localUserError.street = true;
+        }
+
+        if (val.houseNumber && val.houseNumber.length >= 1) {
+          this.localUserError.houseNumber = false;
+        } else {
+          this.localUserError.houseNumber = true;
+        }
+
+        var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+        var isValidEmail = regexPatt.test(val.email);
+
+        if (!isValidEmail) {
+          this.localUserError.email = true;
+            // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
+        }
+
+        if (isValidEmail) {
+          this.localUserError.email = false;
+            // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
+        }
+
+        if (val.password && val.password.length >= 6) {
+          this.localUserError.password = false;
+        } else {
+          this.localUserError.password = true;
+        }
+
+        if (val.passwordTwo && val.passwordTwo.length >= 6) {
+          this.localUserError.passwordTwo = false;
+        } else {
+          this.localUserError.passwordTwo = true;
+        }
+
+        if (val.phoneNumber && val.phoneNumber.length >= 9) {
+          this.localUserError.phoneNumber = false;
+        } else {
+          this.localUserError.phoneNumber = true;
+        }
+
+
+        // console.log('Ez az every: ');
+        // console.log(this.localUserError.every(val => val === false));
+
+
+        this.checkValami();
+        
       },
       deep: true
     }
