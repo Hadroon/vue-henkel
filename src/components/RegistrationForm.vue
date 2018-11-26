@@ -94,7 +94,7 @@
                   </td>
                 </tr>
               </table>
-              <p><input type="checkbox" name="eula" value="1" v-model="user.acceptedToU"> Elolvastam és elfogadom a <a href="#">Szabályzatot</a>,
+              <p><input type="checkbox" name="eula" value="1" v-model="user.eula"> Elolvastam és elfogadom a <a href="#">Szabályzatot</a>,
                 valamint az <a href="#">Adatvédelmi tájékoztatót</a>.</p>
               <p><input type="checkbox" name="gdpr" value="1" v-model="user.correctAge"> Nyilatokzom, hogy elmúltam 18 éves.</p>
               <div style="align-items: center;">
@@ -159,7 +159,8 @@ export default {
       })
       .then(response => {
         console.log('koszi az adatot');
-        this.user.auth = response.data.auth;
+        console.log(response);
+        // this.user.auth = response.data.auth;
           })
           .catch(function (error) {
               console.error(error.response);

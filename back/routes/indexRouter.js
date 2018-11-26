@@ -1,32 +1,36 @@
 var express = require('express');
 var router = express.Router();
+var nodemailer = require('nodemailer');
+var RandomString = require('randomstring');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
-var User = require('../models/user');
+var User = require('../models/users');
 // var verifyEmail = require('../controllers/emailVerify.js');
 
 
 router.post('/reg', function (req, res) {
 
     const reqUser = req.body.user;
+    console.log(reqUser);
 
     var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
     var isValidEmail = regexPatt.test(reqUser.email);
     if (!isValidEmail) {
-        // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
-        return res.status(200).send({ auth: true, token: 'token', user: 'user' });
+        // return res.status(200).send({ auth: true, token: 'token', user: 'user' });
+        return res.status(200).send({ error: 'A megadott email címmel már regisztráltak. Kérlek ellenőrizd vagy lépj be.' });
     }
 
-    if (password.length < 6) {
-        return done(null, false, req.flash('signupMessage', 'A jelszónak legalább 6 karakter hosszúnak kell lennie.'));
+    if (reqUser.password.length < 6 || reqUser.passwordTwo.length < 6) {
+        return res.status(200).send({ error: 'A jelszónak legalább 6 karakter hosszúnak kell lennie.' });
     }
 
-    if (password !== req.body.passwordtwo) {
-        return done(null, false, req.flash('signupMessage', 'A jelszavaknak meg kell egyeznie.'));
+    if (reqUser.password !== reqUser.passwordTwo) {
+        return res.status(200).send({ error: 'A jelszavaknak meg kell egyeznie.' });
     }
 
-    if (req.body.eula != 1 || req.body.gdpr != 1) {
-        return done(null, false, req.flash('signupMessage', 'Az oldal használatához a szabályzatot és'
-            + 'az adatvédelmi szabályzatot is el kell fogadni.'));
+    if (reqUser.eula != true || reqUser.correctAge != true) {
+        return res.status(200).send({ error: 'Az oldal használatához a szabályzatot és az adatvédelmi szabályzatot is el kell fogadni.' });
     }
 
 
@@ -37,87 +41,73 @@ router.post('/reg', function (req, res) {
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         // User.findOne({ 'local.email': email }, function (err, user) {
-        User.findOne({ $or: [{ 'local.email': email }, { 'google.email': email }] }, function (err, user) {
+        User.findOne({ 'email': reqUser.email }, function (err, user) {
             // if there are any errors, return the error
-            if (err)
+            if (err) {
                 return done(err);
+            }
 
             // check to see if theres already a user with that email
             if (user) {
 
-                if (user.local.isEmailVerified === false) {
-                    return done(null, false, req.flash('signupMessage', 'Email címedre aktíváló emailt küldtünk. Kérünk aktíváld az email címedet'));
+                if (user.isEmailVerified === false) {
+                    return res.status(200).send({ error: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
                 }
 
-                // if already registered with google, just updating the user
-                if (user.google.email == email) {
-                    //var newUser = new User();
-
-                    // set the user's local credentials
-                    user.local.email = email;
-                    user.local.password = user.generateHash(password);
-
-                    // save the user
-                    user.save(function (err) {
-                        if (err)
-                            throw err;
-                        return done(null, user);
-                    });
-                } else {
-                    return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
-                }
+                // ==========================================
+                // TODO ha ide eljut akkor be kell léptetni
+                // ===========================================
             } else {
 
-                // if there is no user with that email
-                // create the user
-                var newUser = new User();
+                var newUserObject = new User(reqUser);
 
-                // set the user's local credentials
-                newUser.local.email = email;
-                newUser.local.password = newUser.generateHash(password);
-                newUser.local.isEmailVerified = false;
-                newUser.local.emailVerificationToken = RandomString.generate({
-                    length: 64
-                });
-                var date = new Date();
-                date.setHours(date.getHours() + 2);
-                newUser.local.registered = date;
-                newUser.local.eula = true;
-                newUser.local.gdpr = true;
+                newUserObject.password = newUserObject.generateHash(reqUser.password);
+                newUserObject.passwordTwo = newUserObject.generateHash(reqUser.passwordTwo);
+                newUserObject.registered = new Date();
+                newUserObject.isEmailVerified = true;
                 
-
                 // save the user
-                newUser.save(function (err) {
-                    if (err)
-                        throw err;
-                    // return done(null, newUser);
-                    return done(null, false, req.flash('signupMessage', 'Email címedre aktíváló levelet küldtünk.'));
+                newUserObject.save(function (err) {
+                    if (err) throw err;
+                    console.log('save lementve: ');
+                    console.log('user id: ');
+                    console.log(newUserObject._id);
+                    // return done(null, false, req.flash('signupMessage', 'Email címedre aktíváló levelet küldtünk.'));
+                    // return res.status(200).send({ message: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
+                    let token = jwt.sign({ id: newUserObject._id }, config.secret, {expiresIn: 86400 });
+                    res.status(200).send({ auth: true, token: token, user: newUserObject });
                 });
 
-                var transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: 'gabor.muranyi@gmail.com',
-                        pass: config.all.gpass
-                    }
-                });
+                // User.create(rewUser, function (err, user) {
+                //     if (err) throw err;
 
-                var mailOptions = {
-                    from: 'noreply@wangaru-interactive.com',
-                    to: email,
-                    subject: 'Aktíváló email',
-                    html: '<a href="http://localhost:8080/verify/' + newUser.local.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
-                };
+                //     var transporter = nodemailer.createTransport({
+                //         service: 'gmail',
+                //         auth: {
+                //             user: 'gabor.muranyi@gmail.com',
+                //             pass: 'jelszo0500'
+                //         }
+                //     });
 
-                transporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                    }
-                });
+                //     var mailOptions = {
+                //         from: 'noreply@wangaru-interactive.com',
+                //         to: email,
+                //         subject: 'Aktíváló email',
+                //         html: '<a href="http://localhost:8080/verify/' + newUser.local.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
+                //     };
+    
+                //     transporter.sendMail(mailOptions, function (error, info) {
+                //         if (error) {
+                //             console.log(error);
+                //         } else {
+                //             console.log('Email sent: ' + info.response);
+                //         }
+                //     });
 
+                //   });
 
+                // just testing
+                // return res.status(200).send({ error: 'User crálva.' });
 
             }
 

@@ -75,7 +75,7 @@ export default {
           street: null,
           houseNumber: null,
           phoneNumber: null,
-          acceptedToU: null,
+          eula: null,
           correctAge: null
         },
         regErrorMessages: {

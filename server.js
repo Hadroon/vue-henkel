@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 
 var indexRouter = require('./back/routes/indexRouter');
 
-mongoose.connect('mongodb://localhost:27017/henkel-vue');
+mongoose.connect('mongodb://localhost:27017/vue-henkel');
 
 const db = mongoose.connection;
 
