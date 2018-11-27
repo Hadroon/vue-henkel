@@ -13,6 +13,8 @@ router.post('/reg', function (req, res) {
 
     const reqUser = req.body.user;
     console.log(reqUser);
+    console.log('headers: ');
+    console.log(req.headers);
 
     var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
     var isValidEmail = regexPatt.test(reqUser.email);
@@ -65,6 +67,7 @@ router.post('/reg', function (req, res) {
                 newUserObject.passwordTwo = newUserObject.generateHash(reqUser.passwordTwo);
                 newUserObject.registered = new Date();
                 newUserObject.isEmailVerified = true;
+                newUserObject.roles = ['user'];
                 
                 // save the user
                 newUserObject.save(function (err) {
@@ -74,7 +77,7 @@ router.post('/reg', function (req, res) {
                     console.log(newUserObject._id);
                     // return done(null, false, req.flash('signupMessage', 'Email címedre aktíváló levelet küldtünk.'));
                     // return res.status(200).send({ message: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
-                    let token = jwt.sign({ id: newUserObject._id }, config.secret, {expiresIn: 86400 });
+                    let token = jwt.sign({ id: newUserObject._id, roles: newUserObject.roles }, config.secret, {expiresIn: 86400 });
                     res.status(200).send({ auth: true, token: token, user: newUserObject });
                 });
 
@@ -124,24 +127,46 @@ router.post('/reg', function (req, res) {
 
 router.post('/login', function (req, res) {
 
-    var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
-    var isValidEmail = regexPatt.test(email);
-    if (!isValidEmail) {
-        return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
-    }
+    // console.log(reqUser);
+    console.log('headers from login: ');
+    console.log(req.headers);
+
+
+
+    jwt.verify(req.headers.henkeltoken, config.secret, function(err, decoded) {     
+        if (err) {
+            console.log('error login: ');
+            console.log(err);
+            return res.json({ success: false, message: 'Failed to authenticate token.' });       
+        } else {
+        // if everything is good, save to request for use in other routes
+        console.log('JWT decoded: ');
+        console.log(decoded);
+        req.decoded = decoded;  
+        // next();
+      }
+    });
+
+    // res.status(200).send({ auth: true, token: 'token', user: 'user' });
+
+    // var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+    // var isValidEmail = regexPatt.test(email);
+    // if (!isValidEmail) {
+    //     return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
+    // }
     
-    if (password.length < 6) {
-        return done(null, false, req.flash('signupMessage', 'A jelszónak legalább 6 karakter hosszúnak kell lennie.'));
-    }
+    // if (password.length < 6) {
+    //     return done(null, false, req.flash('signupMessage', 'A jelszónak legalább 6 karakter hosszúnak kell lennie.'));
+    // }
     
-    if (password !== req.body.passwordtwo) {
-        return done(null, false, req.flash('signupMessage', 'A jelszavaknak meg kell egyeznie.'));
-    }
+    // if (password !== req.body.passwordtwo) {
+    //     return done(null, false, req.flash('signupMessage', 'A jelszavaknak meg kell egyeznie.'));
+    // }
     
-    if (req.body.eula != 1 || req.body.gdpr != 1) {
-        return done(null, false, req.flash('signupMessage', 'Az oldal használatához a szabályzatot és'
-            + 'az adatvédelmi szabályzatot is el kell fogadni.'));
-    }
+    // if (req.body.eula != 1 || req.body.gdpr != 1) {
+    //     return done(null, false, req.flash('signupMessage', 'Az oldal használatához a szabályzatot és'
+    //         + 'az adatvédelmi szabályzatot is el kell fogadni.'));
+    // }
     
     });
 

@@ -84,6 +84,9 @@ export default {
           incorrectPassword: 'A jelszónak legalább 6 karakter hosszúnak kell lennie.',
           notAcceptedConditions: 'Az oldal használatához a szabályzatot és az adatvédelmi szabályzatot is el kell fogadni.',
           requiredFiels: 'Kérlek az összes mezőt töltsd ki.'
+        },
+        authenticated: {
+          auth: false
         }
       }
     },

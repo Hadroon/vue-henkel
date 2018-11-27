@@ -9,6 +9,11 @@ Vue.config.productionTip = true;
 Vue.prototype.$http = Axios;
 Vue.use(VueMask);
 
+const token = localStorage.getItem('henkelToken');
+if (token) {
+  Vue.prototype.$http.defaults.headers.common['henkelToken'] = token
+}
+
 
 new Vue({
   render: h => h(App),

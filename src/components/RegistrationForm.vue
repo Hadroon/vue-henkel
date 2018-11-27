@@ -8,6 +8,7 @@
 
     <div class="left" v-if="!succesMessage">
             <h1 style="text-align: center;">Regisztráció</h1>
+            <p>{{ user }}</p>
             <!-- <div v-if="errors.length">
               <p :key="error" v-for="error in errors">{{ error }}</p>
             </div> -->
@@ -161,6 +162,10 @@ export default {
         console.log('koszi az adatot');
         console.log(response);
         // this.user.auth = response.data.auth;
+        localStorage.henkelToken = response.data.token;
+        // localStorage.setItem('user',JSON.stringify(response.data.user));
+        // localStorage.setItem('jwt',response.data.token);
+        this.user = response.data.user;
           })
           .catch(function (error) {
               console.error(error.response);
