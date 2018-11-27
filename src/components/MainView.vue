@@ -27,7 +27,7 @@
             <RegistrationForm v-bind:user="user" :regErrorMessages="regErrorMessages" />
 
             <!-- <LogInForm v-if="this.user.auth === false" v-bind:user="user" v-on:sendingData="upDate($event)" /> -->
-            <LogInForm v-bind:user="user" v-on:sendingData="upDate($event)" />
+            <LogInForm v-bind:user="user" :authenticated="authenticated" v-on:sendingData="upDate($event)" />
 
 
         </div>

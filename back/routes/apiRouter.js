@@ -3,39 +3,32 @@ var router = express.Router();
 var nodemailer = require('nodemailer');
 var RandomString = require('randomstring');
 const jwt = require('jsonwebtoken');
-var bcrypt   = require('bcrypt-nodejs');
 const config = require('../config');
 
 var User = require('../models/users');
 // var verifyEmail = require('../controllers/emailVerify.js');
 
 
-router.post('/reg', function (req, res) {
+router.get('/user', function (req, res) {
 
     const reqUser = req.body.user;
-    // console.log(reqUser);
-    // console.log('headers: ');
-    // console.log(req.headers);
+    console.log(reqUser);
+    console.log('headers: ');
+    console.log(req.headers);
 
-    var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
-    var isValidEmail = regexPatt.test(reqUser.email);
-    if (!isValidEmail) {
-        // return res.status(200).send({ auth: true, token: 'token', user: 'user' });
-        return res.status(200).send({ error: 'A megadott email címmel már regisztráltak. Kérlek ellenőrizd vagy lépj be.' });
-    }
-
-    if (reqUser.password.length < 6 || reqUser.passwordTwo.length < 6) {
-        return res.status(200).send({ error: 'A jelszónak legalább 6 karakter hosszúnak kell lennie.' });
-    }
-
-    if (reqUser.password !== reqUser.passwordTwo) {
-        return res.status(200).send({ error: 'A jelszavaknak meg kell egyeznie.' });
-    }
-
-    if (reqUser.eula != true || reqUser.correctAge != true) {
-        return res.status(200).send({ error: 'Az oldal használatához a szabályzatot és az adatvédelmi szabályzatot is el kell fogadni.' });
-    }
-
+    jwt.verify(req.headers.henkeltoken, config.secret, function(err, decoded) {     
+        if (err) {
+            console.log('error login: ');
+            console.log(err);
+            return res.json({ success: false, message: 'Failed to authenticate token.' });       
+        } else {
+        // if everything is good, save to request for use in other routes
+        console.log('JWT decoded: ');
+        console.log(decoded);
+        req.decoded = decoded;  
+        // next();
+      }
+    });
 
     // asynchronous
     // User.findOne wont fire unless data is sent back
@@ -69,20 +62,17 @@ router.post('/reg', function (req, res) {
                 newUserObject.registered = new Date();
                 newUserObject.isEmailVerified = true;
                 newUserObject.roles = ['user'];
-
-                // console.log('ez a newUserObject: ');
-                // console.log(newUserObject);
                 
                 // save the user
                 newUserObject.save(function (err) {
                     if (err) throw err;
-                    // console.log('save lementve: ');
-                    // console.log('user id: ');
-                    // console.log(newUserObject._id);
+                    console.log('save lementve: ');
+                    console.log('user id: ');
+                    console.log(newUserObject._id);
                     // return done(null, false, req.flash('signupMessage', 'Email címedre aktíváló levelet küldtünk.'));
                     // return res.status(200).send({ message: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
-                    // let token = jwt.sign({ id: newUserObject._id, roles: newUserObject.roles }, config.secret, {expiresIn: 86400 });
-                    res.status(200).send({ succesMessage: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
+                    let token = jwt.sign({ id: newUserObject._id, roles: newUserObject.roles }, config.secret, {expiresIn: 86400 });
+                    res.status(200).send({ auth: true, token: token, user: newUserObject });
                 });
 
                 // User.create(rewUser, function (err, user) {
@@ -129,42 +119,49 @@ router.post('/reg', function (req, res) {
     //  res.status(200).send({ auth: true, token: 'token', user: 'user' });
 });
 
-router.post('/login', function (req, res) {
+router.get('/valami', function (req, res) {
 
-    console.log('req.body');
-    console.log(req.body);
+    // console.log(reqUser);
+    console.log('headers from login: ');
+    console.log(req.headers);
 
-    User.findOne({ 'email': req.body.email }, function (err, user) {
-        // if there are any errors, return the error
+
+
+    jwt.verify(req.headers.henkeltoken, config.secret, function(err, decoded) {     
         if (err) {
-            return done(err);
-        }
-
-        // check to see if theres already a user with that email
-        if (user) {
-
-            const passCrypt = bcrypt.compareSync(req.body.password, user.password);
-            
-            if (!passCrypt) {
-                return res.status(200).send({ error: 'Nem megfelelő adatok.' });
-            }
-
-            if (user.isEmailVerified === false) {
-                return res.status(200).send({ error: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
-            }
-
-            let token = jwt.sign({ id: user._id, roles: user.roles }, config.secret, {expiresIn: 86400 });
-            res.status(200).send({ auth: true, token: token, user: user });
-
-
-
-            // ==========================================
-            // TODO ha ide eljut akkor be kell léptetni
-            // ===========================================
+            console.log('error login: ');
+            console.log(err);
+            return res.json({ success: false, message: 'Failed to authenticate token.' });       
         } else {
-        }
+        // if everything is good, save to request for use in other routes
+        console.log('JWT decoded: ');
+        console.log(decoded);
+        req.decoded = decoded;  
+        // next();
+      }
     });
 
+    // res.status(200).send({ auth: true, token: 'token', user: 'user' });
+
+    // var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+    // var isValidEmail = regexPatt.test(email);
+    // if (!isValidEmail) {
+    //     return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
+    // }
+    
+    // if (password.length < 6) {
+    //     return done(null, false, req.flash('signupMessage', 'A jelszónak legalább 6 karakter hosszúnak kell lennie.'));
+    // }
+    
+    // if (password !== req.body.passwordtwo) {
+    //     return done(null, false, req.flash('signupMessage', 'A jelszavaknak meg kell egyeznie.'));
+    // }
+    
+    // if (req.body.eula != 1 || req.body.gdpr != 1) {
+    //     return done(null, false, req.flash('signupMessage', 'Az oldal használatához a szabályzatot és'
+    //         + 'az adatvédelmi szabályzatot is el kell fogadni.'));
+    // }
+    
     });
 
 module.exports = router;
