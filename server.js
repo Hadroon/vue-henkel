@@ -17,7 +17,7 @@ mongoose.connect('mongodb://localhost:27017/vue-henkel');
 
 // const db = mongoose.connection;
 
-app = express();
+var app = express();
 app.use(serveStatic(path.join(__dirname, 'dist')));
 // const router = express.Router();
 app.use(bodyParser.json());

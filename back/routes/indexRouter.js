@@ -137,7 +137,7 @@ router.post('/login', function (req, res) {
     User.findOne({ 'email': req.body.email }, function (err, user) {
         // if there are any errors, return the error
         if (err) {
-            return done(err);
+            throw err;
         }
 
         // check to see if theres already a user with that email
@@ -163,6 +163,12 @@ router.post('/login', function (req, res) {
             // ===========================================
         } else {
         }
+    });
+
+    router.get('/verif/:id', function(req, res) {
+        console.log(req.params);
+        res.setHeader('verif', 'almaszos');
+        res.redirect('/');
     });
 
     });

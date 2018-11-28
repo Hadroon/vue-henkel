@@ -9,6 +9,7 @@
         <a href="">Játékleírás</a>
         <a href="">Nyeremények</a>
         <a href="">Játékszabályzat</a>
+        <a href="">{{ url }}</a>
       </div>
     </div>
     <div class="content">
@@ -22,12 +23,11 @@
       </div>
       <div id="forms" class="anchor"></div>
       <div class="relative">
-        <div id="logic" class="grid-forms">
-
+        <div v-if="!this.authenticated.auth" id="logic" class="grid-forms">
             <RegistrationForm v-bind:user="user" :regErrorMessages="regErrorMessages" />
-
-            <!-- <LogInForm v-if="this.user.auth === false" v-bind:user="user" v-on:sendingData="upDate($event)" /> -->
             <LogInForm v-bind:user="user" :authenticated="authenticated" v-on:sendingData="upDate($event)" />
+        </div>
+        <div v-else id="logic" class="grid-forms">
 
 
         </div>
@@ -87,12 +87,19 @@ export default {
         },
         authenticated: {
           auth: false
-        }
+        },
+        url: response.headers.get('verif'),
       }
     },
     methods: {
       upDate: function(email){
         this.user.email = email;
+    },
+    mounted() {
+      console.log('created called.');
+      console.log(this.$route);
+      console.log('this: ');
+      console.log(this);
     }
   }
 }
@@ -234,7 +241,8 @@ a:target:before {
   z-index: 10000;
   background-color: #ed1b24;
   width: 100%;
-  box-shadow: 0px 2px 2px 1px rgba(211,211,211, .9);
+  /* box-shadow: 0px 2px 2px 1px rgba(211,211,211, .9); */
+  box-shadow: 0 5px 36px -2px #000;
 }
 
 .footer {
