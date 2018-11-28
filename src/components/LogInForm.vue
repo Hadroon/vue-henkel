@@ -44,7 +44,7 @@ export default {
     handleSubmit: async function(e){
       e.preventDefault();
       this.errorMessage = '';
-      await this.$http.post('http://localhost:8080/login', {
+      await this.$http.post('/login', {
       email: this.localEmail,
       password: this.localPassword
       })

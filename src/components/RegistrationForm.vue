@@ -145,7 +145,7 @@ export default {
     handleSubmit: async function(e){
       e.preventDefault();
       this.error = null;
-      await this.$http.post('http://localhost:8080/reg', {
+      await this.$http.post('/reg', {
       user: this.user
       })
       .then(response => {
