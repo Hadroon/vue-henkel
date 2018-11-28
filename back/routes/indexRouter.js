@@ -80,7 +80,7 @@ router.post("/reg", function(req, res) {
           reqUser.passwordTwo
         );
         newUserObject.registered = new Date();
-        newUserObject.isEmailVerified = false;
+        newUserObject.isEmailVerified = true;
         newUserObject.roles = ["user"];
 
         newUserObject.emailVerificationToken = RandomString.generate({

@@ -12,7 +12,9 @@ var history = require('connect-history-api-fallback');
 var indexRouter = require('./back/routes/indexRouter');
 var apiRouter = require('./back/routes/apiRouter');
 
-mongoose.connect('mongodb://localhost:27017/vue-henkel');
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/vue-henkel'
+
+mongoose.connect(mongoUri);
 
 
 var app = express();

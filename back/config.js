@@ -1,3 +1,3 @@
 module.exports = {
-    'secret': 'applicationsecret'
+    'secret': process.env.SESSION_SECRET || 'applicationsecret',
 };
