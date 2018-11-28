@@ -37,40 +37,28 @@ export default {
     return {
       localEmail: null,
       localPassword: null,
-      errorMessage: 'tesztimesszi'
+      errorMessage: null
     }
   },
   methods: {
-    handleSubmitSajat: function(e){
-      this.user.email = '';
-      this.user.password = '';
-      e.preventDefault();
-    },
     handleSubmit: async function(e){
       e.preventDefault();
-
+      this.errorMessage = '';
       await this.$http.post('http://localhost:8080/login', {
       email: this.localEmail,
       password: this.localPassword
       })
       .then(response => {
-        console.log('login megjött :)');
-        // this.user.auth = response.data.auth;
-        // this.user.auth = response.data.auth;
-        // if (response.data.error) {
-        //   console.log('hiba');
-        //   return this.errorMessage = response.data.error;
-        // }
-        console.log('ez lefutott????');
-        localStorage.henkelToken = response.data.token;
-        this.user = response.data.user;
-        this.authenticated.auth = response.data.auth;
-        // localStorage.setItem('user',JSON.stringify(response.data.user));
-        // localStorage.setItem('jwt',response.data.token);
-          },
-          (err) => {
-            console.log('bejöt valami errorba');
-            console.log(err);
+        if(response.data.error) {
+          return this.errorMessage = response.data.error;
+        }
+
+        if(response.data.auth) {
+          console.log(response);
+          localStorage.henkelToken = response.data.token;
+          this.user.email = response.data.user.email;
+          this.authenticated.auth = response.data.auth;
+        }
           })
           .catch(function (error) {
               console.error(error.response);

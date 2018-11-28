@@ -8,10 +8,7 @@
 
       <div class="left" v-if="!succesMessage">
               <h1 style="text-align: center;">Regisztráció</h1>
-              <p>{{ user }}</p>
-              <!-- <div v-if="errors.length">
-                <p :key="error" v-for="error in errors">{{ error }}</p>
-              </div> -->
+              <p v-if="error">{{ error }}</p>
               <form id="registration" action="/signup" method="post" novalidate="true">
                 <table style="width:100%">
                   <tr>
@@ -141,27 +138,20 @@ export default {
       },
       preventSendReg: false,
       succesMessage: null,
+      error: null
     }
   }, 
   methods: {
     handleSubmit: async function(e){
-
-      this.errors = [];
-
-      // if (!this.name) {
-      //   this.errors.push('Name required.');
-      // }
-      // if (!this.age) {
-      //   this.errors.push('Age required.');
-      // }
       e.preventDefault();
+      this.error = null;
       await this.$http.post('http://localhost:8080/reg', {
       user: this.user
       })
       .then(response => {
-        console.log('koszi az adatot');
-        console.log(response);
-        // this.user = response.data.user;
+        if (response.data.error) {
+          return this.error = response.data.error;
+        }
         if (response.data.succesMessage) {
           this.succesMessage = response.data.succesMessage;
         }
@@ -170,23 +160,6 @@ export default {
               console.error(error.response);
               console.error(error.response.data);
           });
-
-    },
-    checkForm: function (e) {
-      if (this.name && this.age) {
-        return true;
-      }
-
-      this.errors = [];
-
-      if (!this.name) {
-        this.errors.push('Name required.');
-      }
-      if (!this.age) {
-        this.errors.push('Age required.');
-      }
-
-      e.preventDefault();
     },
 
     checkValami: function() {
@@ -203,104 +176,89 @@ export default {
     }
   },
   computed: {
-    // changeDisabledStatusOnRegButton: function() {
-    //     if (this.localUserError.some(val => val === false)) return this.preventSendReg = false;
-    // }
+  },
+  watch: {
+    user: {
+      handler: function(val) {
 
-    // checkValami: function() {
-    //   for (var key in this.localUserError) {
-    //     // if (this.localUserError.hasOwnProperty(key)) {
-    //     //   console.log(key + " -> " + this.localUserError[key]);
-    //     // if (localUserError[key] === true) return true;
-    //     // }
-    //     console.log(key);
-    //     console.log(this.localUserError.key);
-    //   }
-    //     return false
-    // }
-  }
-  // watch: {
-  //   user: {
-  //     handler: function(val) {
+        if (val.firstName && val.firstName.length >= 4) {
+          this.localUserError.firstName = false;
+        } else {
+          this.localUserError.firstName = true;
+        }
 
-  //       if (val.firstName && val.firstName.length >= 4) {
-  //         this.localUserError.firstName = false;
-  //       } else {
-  //         this.localUserError.firstName = true;
-  //       }
+        if (val.lastName && val.lastName.length >= 4) {
+          this.localUserError.lastName = false;
+        } else {
+          this.localUserError.lastName = true;
+        }
 
-  //       if (val.lastName && val.lastName.length >= 4) {
-  //         this.localUserError.lastName = false;
-  //       } else {
-  //         this.localUserError.lastName = true;
-  //       }
+        if (val.zipCode && val.zipCode.length >= 4) {
+          this.localUserError.zipCode = false;
+        } else {
+          this.localUserError.zipCode = true;
+        }
 
-  //       if (val.zipCode && val.zipCode.length >= 4) {
-  //         this.localUserError.zipCode = false;
-  //       } else {
-  //         this.localUserError.zipCode = true;
-  //       }
+        if (val.city && val.city.length >= 4) {
+          this.localUserError.city = false;
+        } else {
+          this.localUserError.city = true;
+        }
 
-  //       if (val.city && val.city.length >= 4) {
-  //         this.localUserError.city = false;
-  //       } else {
-  //         this.localUserError.city = true;
-  //       }
+        if (val.street && val.street.length >= 4) {
+          this.localUserError.street = false;
+        } else {
+          this.localUserError.street = true;
+        }
 
-  //       if (val.street && val.street.length >= 4) {
-  //         this.localUserError.street = false;
-  //       } else {
-  //         this.localUserError.street = true;
-  //       }
+        if (val.houseNumber && val.houseNumber.length >= 1) {
+          this.localUserError.houseNumber = false;
+        } else {
+          this.localUserError.houseNumber = true;
+        }
 
-  //       if (val.houseNumber && val.houseNumber.length >= 1) {
-  //         this.localUserError.houseNumber = false;
-  //       } else {
-  //         this.localUserError.houseNumber = true;
-  //       }
+        var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+        var isValidEmail = regexPatt.test(val.email);
 
-  //       var regexPatt = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
-  //       var isValidEmail = regexPatt.test(val.email);
+        if (!isValidEmail) {
+          this.localUserError.email = true;
+            // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
+        }
 
-  //       if (!isValidEmail) {
-  //         this.localUserError.email = true;
-  //           // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
-  //       }
+        if (isValidEmail) {
+          this.localUserError.email = false;
+            // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
+        }
 
-  //       if (isValidEmail) {
-  //         this.localUserError.email = false;
-  //           // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
-  //       }
+        if (val.password && val.password.length >= 6) {
+          this.localUserError.password = false;
+        } else {
+          this.localUserError.password = true;
+        }
 
-  //       if (val.password && val.password.length >= 6) {
-  //         this.localUserError.password = false;
-  //       } else {
-  //         this.localUserError.password = true;
-  //       }
+        if (val.passwordTwo && val.passwordTwo.length >= 6) {
+          this.localUserError.passwordTwo = false;
+        } else {
+          this.localUserError.passwordTwo = true;
+        }
 
-  //       if (val.passwordTwo && val.passwordTwo.length >= 6) {
-  //         this.localUserError.passwordTwo = false;
-  //       } else {
-  //         this.localUserError.passwordTwo = true;
-  //       }
-
-  //       if (val.phoneNumber && val.phoneNumber.length >= 9) {
-  //         this.localUserError.phoneNumber = false;
-  //       } else {
-  //         this.localUserError.phoneNumber = true;
-  //       }
+        if (val.phoneNumber && val.phoneNumber.length >= 9) {
+          this.localUserError.phoneNumber = false;
+        } else {
+          this.localUserError.phoneNumber = true;
+        }
 
 
-  //       // console.log('Ez az every: ');
-  //       // console.log(this.localUserError.every(val => val === false));
+        // console.log('Ez az every: ');
+        // console.log(this.localUserError.every(val => val === false));
 
 
-  //       this.checkValami();
+        this.checkValami();
         
-  //     },
-  //     deep: true
-  //   }
-  // }
+      },
+      deep: true
+    }
+  }
 };
 </script>
 

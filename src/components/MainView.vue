@@ -9,7 +9,6 @@
         <a href="">Játékleírás</a>
         <a href="">Nyeremények</a>
         <a href="">Játékszabályzat</a>
-        <a href="">{{ url }}</a>
       </div>
     </div>
     <div class="content">
@@ -27,7 +26,10 @@
             <RegistrationForm v-bind:user="user" :regErrorMessages="regErrorMessages" />
             <LogInForm v-bind:user="user" :authenticated="authenticated" v-on:sendingData="upDate($event)" />
         </div>
-        <div v-else id="logic" class="grid-forms">
+        <div v-if="this.authenticated.auth" style="height: 500px; background: green;">
+
+        <p> valami  {{this.user.email}}</p>
+          {{ this.user }}
 
 
         </div>
@@ -40,9 +42,7 @@
 
       <div>4</div>
       <div>
-                    
-        <p v-if="user.auth === true">belépve: {{user.email}}</p>
-        <p v-if="user.auth === false">Nincs belpve.</p>
+                  
             
       </div>
       <div class="box footer">Footer</div>
@@ -87,8 +87,7 @@ export default {
         },
         authenticated: {
           auth: false
-        },
-        url: response.headers.get('verif'),
+        }
       }
     },
     methods: {
