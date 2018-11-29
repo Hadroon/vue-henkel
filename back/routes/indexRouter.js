@@ -73,13 +73,16 @@ router.post("/reg", function(req, res) {
         // TODO ha ide eljut akkor be kell léptetni
         // ===========================================
       } else {
+
+        delete reqUser.passwordTwo;
         var newUserObject = new User(reqUser);
 
         newUserObject.password = newUserObject.generateHash(reqUser.password);
-        newUserObject.passwordTwo = newUserObject.generateHash(
-          reqUser.passwordTwo
-        );
-        newUserObject.registered = new Date();
+
+        var date = new Date();
+        date.setHours(date.getHours() + 1);
+        newUserObject.registered = date;
+
         newUserObject.isEmailVerified = true;
         newUserObject.roles = ["user"];
 
@@ -87,14 +90,9 @@ router.post("/reg", function(req, res) {
           length: 64
         });
 
-        // console.log('ez a newUserObject: ');
-        // console.log(newUserObject);
-
         // save the user
         newUserObject.save(function(err) {
           if (err) throw err;
-          // return res.status(200).send({ message: 'Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet' });
-          // let token = jwt.sign({ id: newUserObject._id, roles: newUserObject.roles }, config.secret, {expiresIn: 86400 });
           res.status(200).send({
             succesMessage:
               "Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet"
@@ -181,26 +179,6 @@ router.post("/login", function(req, res) {
   });
 });
 
-// router.get("/verif/:id", function(req, res) {
-//   console.log('itt vagyok a verifben');
-//   User.findOne({ emailVerificationToken: req.params.id }, function(err, user) {
-//     if (err) {
-//       // throw err;
-//       return res.redirect("/#forms");
-//     }
-
-//     if (user) {
-//       user.isEmailVerified = true;
-//       user.save(function(err) {
-//         if (err) throw err;
-//         return res.redirect("/#forms");
-//       });
-//     }
-//   });
-
-//   res.redirect("/csimbili");
-// });
-
 router.post('/check', function(req, res) {
 
   console.log('itt vagyok a check-ben :)');
@@ -218,7 +196,10 @@ router.post('/check', function(req, res) {
   //   res.status(200).send({ auth: true, name: decoded.name}); 
   // });
 
+
   var decoded = jwt.verify(req.body.token, config.secret);
+  console.log('decoded: ');
+  console.log(decoded);
   if (decoded.name) {
     return res.status(200).send({ auth: true, name: decoded.name});
   }

@@ -20,25 +20,24 @@
         <img src="@/assets/folyamat_2.jpg" alt="">
         <img class="separator" src="@/assets/separator.png" alt="">
       </div>
+      <div v-if="spinner.loading" style="height: 200px; padding: 100px;">
+        <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
+      </div>
       <div id="forms" class="anchor"></div>
-      <div class="relative">
-        <div style="height: 500px; padding: 100px;">
-        <!-- <PulseLoader /> -->
-        <grid-loader :loading="loading" :color="color" :size="size"></grid-loader>
-        </div>
+      <div v-if="!spinner.loading" class="relative">
 
 
-        <!-- <div v-if="!this.authenticated.auth && !spinner" id="logic" class="grid-forms">
+        <div v-if="!this.authenticated.auth" id="logic" class="grid-forms">
             <RegistrationForm />
             <LogInForm :authenticated="authenticated" v-on:sendingData="upDate($event)" />
         </div>
-        <div v-if="this.authenticated.auth && !spinner" style="height: 500px; background: green;">
+        <div v-if="this.authenticated.auth" style="height: 500px; background: green;">
 
           <p> valami  {{this.authenticated.name}}</p>
           {{ this.authenticated.name }}
 
 
-        </div> -->
+        </div>
       </div>
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt="">
@@ -59,7 +58,6 @@
 <script>
 import RegistrationForm from './RegistrationForm';
 import LogInForm from './LogInForm';
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import GridLoader from 'vue-spinner/src/GridLoader.vue';
 
 // var GridLoader = VueSpinner.GridLoader
@@ -77,24 +75,23 @@ export default {
           auth: false,
           name: null
         },
-        spinner: true,
-        loading: true,
-        color: 'white',
-        size: '50px'
+        spinner: {
+          loading: true,
+          color: 'black',
+          size: '50px'
+        }
       }
     },
     methods: {
       upDate: function(email){
         this.user.email = email;
       },
-      mounted() {
-        console.log('created called.');
-        console.log(this.$route);
-        console.log('this: ');
-        console.log(this);
-      },
       checkUser() {
-        if (this.authenticated.auth) return;
+        this.spinner.loading = true;
+        if (this.authenticated.auth) {
+          this.spinner.loading = false;
+          return;
+        }
         console.log('van-e henkelToken?: ');
         console.log(localStorage.henkelToken);
         if (localStorage.henkelToken) {
@@ -103,6 +100,7 @@ export default {
             })
             .then(response => {
               if(response.data.error) {
+                this.spinner.loading = false;
                 return;
               }
 
@@ -113,6 +111,7 @@ export default {
                 console.log(response.data.auth);
                 console.log('name: ');
                 console.log(response.data.name);
+                this.spinner.loading = false;
                 return;
               }
               this.authenticated.auth = false;
@@ -122,14 +121,13 @@ export default {
                     console.error(error.response);
                 });
         }
+        this.spinner.loading = false;
+        return;
       }
     },
-    created: async function() {
-    // this.property = 'Example property update.'
-    // console.log('propertyComputed will update, as this.property is now reactive.')
-    await this.checkUser();
+    created() {
+      this.checkUser();
     }
-    
 }
 </script>
 
