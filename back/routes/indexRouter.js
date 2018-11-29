@@ -166,10 +166,14 @@ router.post("/login", function(req, res) {
         });
       }
 
-      let token = jwt.sign({ id: user._id, roles: user.roles }, config.secret, {
+      let fullName = user.lastName + ' ' + user.firstName;
+
+      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
         expiresIn: 86400
       });
-      res.status(200).send({ auth: true, token: token, user: user });
+
+
+      res.status(200).send({ auth: true, token: token, name: fullName});
 
     } else {
       return res.status(200).send({ error: "Hiba történt." });
@@ -177,23 +181,48 @@ router.post("/login", function(req, res) {
   });
 });
 
-router.get("/verif/:id", function(req, res) {
-  User.findOne({ emailVerificationToken: req.params.id }, function(err, user) {
-    if (err) {
-      // throw err;
-      return res.redirect("/#forms");
-    }
+// router.get("/verif/:id", function(req, res) {
+//   console.log('itt vagyok a verifben');
+//   User.findOne({ emailVerificationToken: req.params.id }, function(err, user) {
+//     if (err) {
+//       // throw err;
+//       return res.redirect("/#forms");
+//     }
 
-    if (user) {
-      user.isEmailVerified = true;
-      user.save(function(err) {
-        if (err) throw err;
-        return res.redirect("/#forms");
-      });
-    }
-  });
+//     if (user) {
+//       user.isEmailVerified = true;
+//       user.save(function(err) {
+//         if (err) throw err;
+//         return res.redirect("/#forms");
+//       });
+//     }
+//   });
 
-  res.redirect("/");
+//   res.redirect("/csimbili");
+// });
+
+router.post('/check', function(req, res) {
+
+  console.log('itt vagyok a check-ben :)');
+  console.log(req.body);
+  if(!req.body.token) return;
+
+  // jwt.verify(req.body.token, config.secret, function(err, decoded) {     
+  //   if (err) {
+  //       console.log('error login: ');
+  //       console.log(err);
+  //       return res.json({ error: true });       
+  //   } 
+  //   console.log('JWT decoded: ');
+  //   console.log(decoded); 
+  //   res.status(200).send({ auth: true, name: decoded.name}); 
+  // });
+
+  var decoded = jwt.verify(req.body.token, config.secret);
+  if (decoded.name) {
+    return res.status(200).send({ auth: true, name: decoded.name});
+  }
+  return res.json({ error: true });
 });
 
 module.exports = router;

@@ -22,17 +22,23 @@
       </div>
       <div id="forms" class="anchor"></div>
       <div class="relative">
-        <div v-if="!this.authenticated.auth" id="logic" class="grid-forms">
-            <RegistrationForm v-bind:user="user" :regErrorMessages="regErrorMessages" />
-            <LogInForm v-bind:user="user" :authenticated="authenticated" v-on:sendingData="upDate($event)" />
+        <div style="height: 500px; padding: 100px;">
+        <!-- <PulseLoader /> -->
+        <grid-loader :loading="loading" :color="color" :size="size"></grid-loader>
         </div>
-        <div v-if="this.authenticated.auth" style="height: 500px; background: green;">
-
-        <p> valami  {{this.user.email}}</p>
-          {{ this.user }}
 
 
+        <!-- <div v-if="!this.authenticated.auth && !spinner" id="logic" class="grid-forms">
+            <RegistrationForm />
+            <LogInForm :authenticated="authenticated" v-on:sendingData="upDate($event)" />
         </div>
+        <div v-if="this.authenticated.auth && !spinner" style="height: 500px; background: green;">
+
+          <p> valami  {{this.authenticated.name}}</p>
+          {{ this.authenticated.name }}
+
+
+        </div> -->
       </div>
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt="">
@@ -52,55 +58,78 @@
 
 <script>
 import RegistrationForm from './RegistrationForm';
-import LogInForm from './LogInForm'
+import LogInForm from './LogInForm';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
+import GridLoader from 'vue-spinner/src/GridLoader.vue';
+
+// var GridLoader = VueSpinner.GridLoader
 
 export default {
     name: 'MainView',
     components: {
         RegistrationForm,
-        LogInForm
+        LogInForm,
+        GridLoader
     },
     data() {
       return {
-        user: {
-          auth: false,
-          roles: null,
-          email: null,
-          password: null,
-          passwordTwo: null,
-          firstName: null,
-          lastName: null,
-          zipCode: null,
-          city: null,
-          street: null,
-          houseNumber: null,
-          phoneNumber: null,
-          eula: null,
-          correctAge: null
-        },
-        regErrorMessages: {
-          email: 'Kérlek ellenőrizd a megadott email címet.',
-          notSamePasswords: 'A jelszavaknak meg kell egyeznie.',
-          incorrectPassword: 'A jelszónak legalább 6 karakter hosszúnak kell lennie.',
-          notAcceptedConditions: 'Az oldal használatához a szabályzatot és az adatvédelmi szabályzatot is el kell fogadni.',
-          requiredFiels: 'Kérlek az összes mezőt töltsd ki.'
-        },
         authenticated: {
-          auth: false
-        }
+          auth: false,
+          name: null
+        },
+        spinner: true,
+        loading: true,
+        color: 'white',
+        size: '50px'
       }
     },
     methods: {
       upDate: function(email){
         this.user.email = email;
+      },
+      mounted() {
+        console.log('created called.');
+        console.log(this.$route);
+        console.log('this: ');
+        console.log(this);
+      },
+      checkUser() {
+        if (this.authenticated.auth) return;
+        console.log('van-e henkelToken?: ');
+        console.log(localStorage.henkelToken);
+        if (localStorage.henkelToken) {
+          this.$http.post('/check', {
+            token: localStorage.henkelToken 
+            })
+            .then(response => {
+              if(response.data.error) {
+                return;
+              }
+
+              if(response.data.auth) {
+                this.authenticated.auth = response.data.auth;
+                this.authenticated.name = response.data.name;
+                console.log('auth: ');
+                console.log(response.data.auth);
+                console.log('name: ');
+                console.log(response.data.name);
+                return;
+              }
+              this.authenticated.auth = false;
+              this.authenticated.name = '';
+                })
+                .catch(function (error) {
+                    console.error(error.response);
+                });
+        }
+      }
     },
-    mounted() {
-      console.log('created called.');
-      console.log(this.$route);
-      console.log('this: ');
-      console.log(this);
+    created: async function() {
+    // this.property = 'Example property update.'
+    // console.log('propertyComputed will update, as this.property is now reactive.')
+    await this.checkUser();
     }
-  }
+    
 }
 </script>
 

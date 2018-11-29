@@ -113,15 +113,23 @@ export default {
     components: {
     },
   props: {
-    user: {
-      type: Object
-    },
-    regErrorMessages: {
-      type: Object
-    }
   },
   data() {
     return {
+      user: {
+          email: null,
+          password: null,
+          passwordTwo: null,
+          firstName: null,
+          lastName: null,
+          zipCode: null,
+          city: null,
+          street: null,
+          houseNumber: null,
+          phoneNumber: null,
+          eula: null,
+          correctAge: null
+        },
       localUserError: {
         email: true,
         password: true,
@@ -160,7 +168,7 @@ export default {
               console.error(error.response);
               console.error(error.response.data);
           });
-    },
+        },
 
     checkValami: function() {
       for (var key in this.localUserError) {

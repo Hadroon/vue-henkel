@@ -1,7 +1,7 @@
 <template>
   <div class="right">
     <h1 style="text-align: center;">Belépés</h1>
-    <p v-if="this.authenticated.auth">Belépve {{this.user.email}}</p>
+    <!-- <p v-if="this.authenticated.auth">Belépve {{this.user.email}}</p> -->
     <p v-if="this.errorMessage">{{this.errorMessage}}</p>
     <!-- <p>Belépve {{this.user.email}}</p> -->
     <form action="/login" method="post">
@@ -56,8 +56,8 @@ export default {
         if(response.data.auth) {
           console.log(response);
           localStorage.henkelToken = response.data.token;
-          this.user.email = response.data.user.email;
           this.authenticated.auth = response.data.auth;
+          this.authenticated.name = response.data.name
         }
           })
           .catch(function (error) {
