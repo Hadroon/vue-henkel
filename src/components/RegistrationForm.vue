@@ -128,16 +128,16 @@ export default {
         size: "50px"
       },
       user: {
-          email: null,
-          password: null,
-          passwordTwo: null,
-          firstName: null,
-          lastName: null,
-          zipCode: null,
-          city: null,
-          street: null,
-          houseNumber: null,
-          phoneNumber: null,
+          email: '',
+          password: '',
+          passwordTwo: '',
+          firstName: '',
+          lastName: '',
+          zipCode: '',
+          city: '',
+          street: '',
+          houseNumber: '',
+          phoneNumber: '',
           eula: null,
           correctAge: null
         },
@@ -182,11 +182,6 @@ export default {
         return; 
       }
     }
-  },
-  computed: {
-  },
-  created() {
-    
   },
   watch: {
     user: {
@@ -233,12 +228,10 @@ export default {
 
         if (!isValidEmail) {
           this.localUserError.email = true;
-            // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
         }
 
         if (isValidEmail) {
           this.localUserError.email = false;
-            // return done(null, false, req.flash('signupMessage', 'Kérlek ellenőrizd a megadott email címet.'));
         }
 
         if (val.password && val.password.length >= 6) {
@@ -259,7 +252,7 @@ export default {
           this.localUserError.phoneNumber = true;
         }
 
-        // this.checkValami();
+        // this.canEnableRegistration();
       },
       deep: true
     }

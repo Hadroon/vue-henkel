@@ -12,6 +12,20 @@ var User = require("../models/users");
 router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
 
+  console.log(reqUser);
+  if (reqUser.firstName.length < 4 ||
+    reqUser.lastName.length < 4 ||
+    reqUser.zipCode.length < 4 ||
+    reqUser.city.length < 4 ||
+    reqUser.street.length < 4 ||
+    reqUser.houseNumber.length < 1 ||
+    reqUser.phoneNumber.length < 4
+    ) {
+      return res.status(200).send({
+        error: "Kérlek add meg az összes adatot."
+      });
+    }
+
   var regexPatt = new RegExp(
     "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
   );
@@ -20,7 +34,7 @@ router.post("/reg", function (req, res) {
   if (!isValidEmail) {
     // return res.status(200).send({ auth: true, token: 'token', user: 'user' });
     return res.status(200).send({
-      error: "A megadott emailcím nem megfelelő formátumú. Kérlek ellenőrizd"
+      error: "A megadott emailcím nem megfelelő formátumú. Kérlek ellenőrizd."
     });
   }
 
@@ -83,7 +97,7 @@ router.post("/reg", function (req, res) {
         date.setHours(date.getHours() + 1);
         newUserObject.registered = date;
 
-        newUserObject.isEmailVerified = true;
+        newUserObject.isEmailVerified = false;
         newUserObject.roles = ["user"];
 
         newUserObject.emailVerificationToken = RandomString.generate({
@@ -164,7 +178,7 @@ router.post("/login", function (req, res) {
       res.status(200).send({ auth: true, token: token, name: fullName });
 
     } else {
-      return res.status(200).send({ error: "Hiba történt." });
+      return res.status(200).send({ error: "Hiba történt. Kérlek ellenőrizd a belépési adatokat." });
     }
   });
 });
