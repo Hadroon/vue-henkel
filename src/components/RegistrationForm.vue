@@ -100,15 +100,13 @@
                   valamint az <a href="#">Adatvédelmi tájékoztatót</a>.</p>
                 <p><input type="checkbox" name="gdpr" value="1" v-model="user.correctAge"> Nyilatokzom, hogy elmúltam 18 éves.</p>
                 <div style="align-items: center;">
-                  <button id="regbutt" @click="handleSubmit">Regisztráció</button>
-                  <!-- <button id="regbutt" :disabled="checkValami" @click="handleSubmit">Regisztráció</button> -->
+                  <!-- <button id="regbutt" @click="handleSubmit">Regisztráció</button> -->
+                  <button id="regbutt" :disabled="canEnableRegistration" @click="handleSubmit">Regisztráció</button>
                 </div>
               </form>
       </div>
     </div>
 </template>
-
-
 
 <script>
 import GridLoader from "vue-spinner/src/GridLoader.vue";
@@ -152,7 +150,7 @@ export default {
         street: true,
         houseNumber: true,
         phoneNumber: true,
-        acceptedToU: true,
+        eula: true,
         correctAge: true
       },
       preventSendReg: false,
@@ -183,9 +181,17 @@ export default {
       }
     }
   },
+  computed: {
+    canEnableRegistration: function() {
+      var valuesOfErrors = Object.values(this.localUserError);
+      var value = valuesOfErrors.includes(true);
+      return value;
+    }
+  },
   watch: {
     user: {
       handler: function(val) {
+        console.log(val);
 
         if (val.firstName && val.firstName.length >= 4) {
           this.localUserError.firstName = false;
@@ -251,6 +257,19 @@ export default {
         } else {
           this.localUserError.phoneNumber = true;
         }
+
+        if (val.eula) {
+          this.localUserError.eula = false;
+        } else {
+          this.localUserError.eula = true;
+        }
+
+        if (val.correctAge) {
+          this.localUserError.correctAge = false;
+        } else {
+          this.localUserError.correctAge = true;
+        }
+
 
         // this.canEnableRegistration();
       },
