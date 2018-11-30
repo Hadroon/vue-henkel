@@ -201,7 +201,7 @@ router.post('/check', function(req, res) {
   console.log('decoded: ');
   console.log(decoded);
   if (decoded.name) {
-    return res.status(200).send({ auth: true, name: decoded.name});
+    return res.status(200).send({ auth: true, name: decoded.name, id: decoded.id});
   }
   return res.json({ error: true });
 });

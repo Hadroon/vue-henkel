@@ -2,137 +2,107 @@
   <div class="wrapper">
     <div class="header">
       <a href="/#forms" style="float:left;">
-        <img style="max-width: 200px; margin-top: 4px;" src="@/assets/ap.jpg" alt="">
+        <img style="max-width: 200px; margin-top: 4px;" src="@/assets/ap.jpg" alt>
       </a>
       <div class="nav">
         <i style="color: green;" class="material-icons">happy</i>
-        <a href="">Játékleírás</a>
-        <a href="">Nyeremények</a>
-        <a href="">Játékszabályzat</a>
+        <a href>Játékleírás</a>
+        <a href>Nyeremények</a>
+        <a href>Játékszabályzat</a>
+        <a v-if="authenticated.auth" href>{{ authenticated.name }}</a>
       </div>
     </div>
     <div class="content">
       <div class="relative">
-        <img src="@/assets/head.jpg" alt="">
-        <img class="separator" src="@/assets/separator.png" alt="">
+        <img src="@/assets/head.jpg" alt>
+        <img class="separator" src="@/assets/separator.png" alt>
       </div>
       <div class="relative">
-        <img src="@/assets/folyamat_2.jpg" alt="">
-        <img class="separator" src="@/assets/separator.png" alt="">
+        <img src="@/assets/folyamat_2.jpg" alt>
+        <img class="separator" src="@/assets/separator.png" alt>
       </div>
       <div v-if="spinner.loading" style="height: 200px; padding: 100px;">
         <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
       </div>
       <div id="forms" class="anchor"></div>
-      <div v-if="!spinner.loading" class="relative">
-
-
-        <div v-if="!this.authenticated.auth" id="logic" class="grid-forms">
-            <RegistrationForm />
-            <LogInForm :authenticated="authenticated" v-on:sendingData="upDate($event)" />
-        </div>
-        <div v-if="this.authenticated.auth" style="height: 500px; background: green;">
-
-          <p> valami  {{this.authenticated.name}}</p>
-          {{ this.authenticated.name }}
-
-
-        </div>
-      </div>
+      <reg-log-wrapper v-if="!this.authenticated.auth && !spinner.loading" class="relative"/>
+      <send-codes
+        v-if="this.authenticated.auth && !spinner.loading"
+        :authenticated="authenticated"
+      />
       <div class="relative">
-        <img class="separator-upper" src="@/assets/separator.png" alt="">
-        <img src="@/assets/nyeremenyek_3.jpg" alt="">
-        <img class="separator" src="@/assets/separator.png" alt="">
+        <img class="separator-upper" src="@/assets/separator.png" alt>
+        <img src="@/assets/nyeremenyek_3.jpg" alt>
+        <img class="separator" src="@/assets/separator.png" alt>
       </div>
 
       <div>4</div>
-      <div>
-                  
-            
-      </div>
+      <div></div>
       <div class="box footer">Footer</div>
     </div>
   </div>
 </template>
 
 <script>
-import RegistrationForm from './RegistrationForm';
-import LogInForm from './LogInForm';
-import GridLoader from 'vue-spinner/src/GridLoader.vue';
-
-// var GridLoader = VueSpinner.GridLoader
+import GridLoader from "vue-spinner/src/GridLoader.vue";
+import RegLogWrapper from "./RegLogWrapper.vue";
+import SendCodes from "./SendCodes.vue";
 
 export default {
-    name: 'MainView',
-    components: {
-        RegistrationForm,
-        LogInForm,
-        GridLoader
-    },
-    data() {
-      return {
-        authenticated: {
-          auth: false,
-          name: null
-        },
-        spinner: {
-          loading: true,
-          color: 'black',
-          size: '50px'
-        }
-      }
-    },
-    methods: {
-      upDate: function(email){
-        this.user.email = email;
+  name: "MainView",
+  components: {
+    RegLogWrapper,
+    GridLoader,
+    SendCodes
+  },
+  data() {
+    return {
+      authenticated: {
+        auth: false,
+        name: null,
+        id: null
       },
-      checkUser() {
+      spinner: {
+        loading: true,
+        color: "black",
+        size: "50px"
+      }
+    };
+  },
+  methods: {
+    upDate: function(email) {
+      this.user.email = email;
+    },
+    checkUser: async function() {
+      try {
         this.spinner.loading = true;
         if (this.authenticated.auth) {
           this.spinner.loading = false;
           return;
         }
-        console.log('van-e henkelToken?: ');
-        console.log(localStorage.henkelToken);
-        if (localStorage.henkelToken) {
-          this.$http.post('/check', {
-            token: localStorage.henkelToken 
-            })
-            .then(response => {
-              if(response.data.error) {
-                this.spinner.loading = false;
-                return;
-              }
-
-              if(response.data.auth) {
-                this.authenticated.auth = response.data.auth;
-                this.authenticated.name = response.data.name;
-                console.log('auth: ');
-                console.log(response.data.auth);
-                console.log('name: ');
-                console.log(response.data.name);
-                this.spinner.loading = false;
-                return;
-              }
-              this.authenticated.auth = false;
-              this.authenticated.name = '';
-                })
-                .catch(function (error) {
-                    console.error(error.response);
-                });
+        let response = await this.$http.post("/check", {
+          token: localStorage.henkelToken
+        });
+        if (response.data.auth) {
+          this.authenticated.auth = response.data.auth;
+          this.authenticated.name = response.data.name;
+          this.authenticated.id = response.data.id;
+          this.spinner.loading = false;
+          return;
         }
-        this.spinner.loading = false;
-        return;
+      } catch (e) {
+        console.error(e);
+        throw e;
       }
-    },
-    created() {
-      this.checkUser();
     }
-}
+  },
+  created() {
+    this.checkUser();
+  }
+};
 </script>
 
 <style>
-
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   margin: 0px;
@@ -143,7 +113,12 @@ img {
   width: 100%;
 }
 
-p, h1, h2, h3, legend, span {
+p,
+h1,
+h2,
+h3,
+legend,
+span {
   color: #ffffff;
   font: "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -183,19 +158,17 @@ td > input {
   border: 2px solid black;
 } */
 
-
 a:target:before {
   top: -500px;
   display: block;
-  position: relative; 
+  position: relative;
   visibility: hidden;
 }
 
 .grid-forms {
   display: grid;
   grid-template-columns: 50% 50%;
-  grid-template-areas:
-  "left right";
+  grid-template-areas: "left right";
 }
 
 .left {
@@ -309,7 +282,6 @@ a:target:before {
 
 .header,
 .footer {
-
 }
 
 .sidebar2 {
@@ -323,8 +295,6 @@ a:target:before {
   width: 20px;
   color: green;
 }
-
-
 </style>
 
 
