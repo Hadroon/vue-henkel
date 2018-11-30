@@ -9,7 +9,7 @@ const config = require("../config");
 var User = require("../models/users");
 // var verifyEmail = require('../controllers/emailVerify.js');
 
-router.post("/reg", function(req, res) {
+router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
 
   var regexPatt = new RegExp(
@@ -50,11 +50,11 @@ router.post("/reg", function(req, res) {
 
   // asynchronous
   // User.findOne wont fire unless data is sent back
-  process.nextTick(function() {
+  process.nextTick(function () {
     // find a user whose email is the same as the forms email
     // we are checking to see if the user trying to login already exists
     // User.findOne({ 'local.email': email }, function (err, user) {
-    User.findOne({ email: reqUser.email }, function(err, user) {
+    User.findOne({ email: reqUser.email }, function (err, user) {
       // if there are any errors, return the error
       if (err) {
         throw err;
@@ -91,7 +91,7 @@ router.post("/reg", function(req, res) {
         });
 
         // save the user
-        newUserObject.save(function(err) {
+        newUserObject.save(function (err) {
           if (err) throw err;
           res.status(200).send({
             succesMessage:
@@ -136,13 +136,13 @@ router.post("/reg", function(req, res) {
   //  res.status(200).send({ auth: true, token: 'token', user: 'user' });
 });
 
-router.post("/login", function(req, res) {
+router.post("/login", function (req, res) {
 
-  if(!req.body.email || !req.body.password) {
+  if (!req.body.email || !req.body.password) {
     return res.status(200).send({ error: "Bejelentkezéshez add meg email címedet és jelszavad." });
   }
 
-  User.findOne({ email: req.body.email }, function(err, user) {
+  User.findOne({ email: req.body.email }, function (err, user) {
     if (err) {
       return res.status(200).send({
         error:
@@ -171,7 +171,7 @@ router.post("/login", function(req, res) {
       });
 
 
-      res.status(200).send({ auth: true, token: token, name: fullName});
+      res.status(200).send({ auth: true, token: token, name: fullName });
 
     } else {
       return res.status(200).send({ error: "Hiba történt." });
@@ -179,31 +179,18 @@ router.post("/login", function(req, res) {
   });
 });
 
-router.post('/check', function(req, res) {
-
-  console.log('itt vagyok a check-ben :)');
-  console.log(req.body);
-  if(!req.body.token) return;
-
-  // jwt.verify(req.body.token, config.secret, function(err, decoded) {     
-  //   if (err) {
-  //       console.log('error login: ');
-  //       console.log(err);
-  //       return res.json({ error: true });       
-  //   } 
-  //   console.log('JWT decoded: ');
-  //   console.log(decoded); 
-  //   res.status(200).send({ auth: true, name: decoded.name}); 
-  // });
-
-
-  var decoded = jwt.verify(req.body.token, config.secret);
-  console.log('decoded: ');
-  console.log(decoded);
-  if (decoded.name) {
-    return res.status(200).send({ auth: true, name: decoded.name, id: decoded.id});
+router.post('/check', function (req, res) {
+  if (!req.body.token) return;
+  try {
+    var decoded = jwt.verify(req.body.token, config.secret);
   }
-  return res.json({ error: true });
+  catch (err) {
+    return res.status(200).send({ error: true });
+  }
+  if (decoded.name) {
+    return res.status(200).send({ auth: true, name: decoded.name, id: decoded.id });
+  }
+  return res.status(200).send({ error: true });
 });
 
 module.exports = router;

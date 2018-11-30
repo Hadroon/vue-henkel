@@ -83,6 +83,11 @@ export default {
         let response = await this.$http.post("/check", {
           token: localStorage.henkelToken
         });
+        if (response.data.error) {
+          this.authenticated.auth = false;
+          this.spinner.loading = false;
+          return;
+        }
         if (response.data.auth) {
           this.authenticated.auth = response.data.auth;
           this.authenticated.name = response.data.name;
