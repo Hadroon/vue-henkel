@@ -106,7 +106,7 @@ router.post("/reg", function (req, res) {
             from: 'noreply@wangaru-interactive.com',
             to: newUserObject.email,
             subject: 'Aktíváló email',
-            html: '<a href="http://localhost:8080/verify/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
+            html: '<a href="http://localhost:8080/verif/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
           };
 
           transporter.sendMail(mailOptions, function (error, info) {
@@ -170,6 +170,7 @@ router.post("/login", function (req, res) {
 });
 
 router.post('/check', function (req, res) {
+  console.log('check user');
   if (!req.body.token) return;
   try {
     var decoded = jwt.verify(req.body.token, config.secret);
@@ -178,9 +179,36 @@ router.post('/check', function (req, res) {
     return res.status(200).send({ error: true });
   }
   if (decoded.name) {
-    return res.status(200).send({ auth: true, name: decoded.name, id: decoded.id });
+    return res.status(200).send({ auth: true, name: decoded.name });
   }
   return res.status(200).send({ error: true });
+});
+
+router.get('/validateemail/:token', async (req, res) => {
+  console.log('validate');
+  console.log(req.params.token);
+  try {
+    let user = await User.findOne({ emailVerificationToken: req.params.token });
+
+    console.log(user.email);
+
+    if (user) {
+      user.isEmailVerified = true;
+      await user.save();
+      console.log(user);
+
+      let fullName = user.lastName + ' ' + user.firstName;
+
+      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
+        expiresIn: 86400
+      });
+
+
+      res.status(200).send({ auth: true, token: token, name: fullName });
+    }
+  } catch (err) {
+    throw err;
+  }
 });
 
 module.exports = router;

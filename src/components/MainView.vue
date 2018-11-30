@@ -8,7 +8,7 @@
         <i style="color: green;" class="material-icons">happy</i>
         <a href>Játékleírás</a>
         <a href>Nyeremények</a>
-        <a href>Játékszabályzat</a>
+        <a href>{{ this.authenticated. auth }}</a>
         <a v-if="authenticated.auth" href>{{ authenticated.name }}</a>
       </div>
     </div>
@@ -25,16 +25,14 @@
         <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
       </div>
       <div id="forms" class="anchor"></div>
-      <!-- <reg-log-wrapper v-if="!this.authenticated.auth && !spinner.loading" :authenticated="authenticated" class="relative"/> -->
+
       <div v-if="!this.authenticated.auth && !spinner.loading" id="logic" class="grid-forms">
         <registration-form />
         <log-in-form :authenticated="authenticated" />
       </div>
-      <send-codes
-        v-if="this.authenticated.auth && !spinner.loading"
-        :authenticated="authenticated"
-        class="relative"
-      />
+
+      <send-codes v-if="this.authenticated.auth && !spinner.loading" :authenticated="authenticated" />
+      
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt>
         <img src="@/assets/nyeremenyek_3.jpg" alt>
@@ -50,26 +48,25 @@
 
 <script>
 import GridLoader from "vue-spinner/src/GridLoader.vue";
-import RegLogWrapper from "./RegLogWrapper.vue";
-import SendCodes from "./SendCodes.vue";
 import RegistrationForm from './RegistrationForm';
 import LogInForm from './LogInForm';
+import ValidateEmail from './ValidateEmail';
+import SendCodes from './SendCodes';
 
 export default {
   name: "MainView",
   components: {
-    RegLogWrapper,
     GridLoader,
-    SendCodes,
     RegistrationForm,
-    LogInForm
+    LogInForm,
+    ValidateEmail,
+    SendCodes
   },
   data() {
     return {
       authenticated: {
         auth: false,
         name: null,
-        id: null
       },
       spinner: {
         loading: true,
@@ -105,8 +102,30 @@ export default {
         if (response.data.auth) {
           this.authenticated.auth = response.data.auth;
           this.authenticated.name = response.data.name;
-          this.authenticated.id = response.data.id;
           this.spinner.loading = false;
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    },
+    validateEmail: async function(emailToken) {
+      try {
+        this.spinner.loading = true;
+        let response = await this.$http.get("/validateemail/" + emailToken);
+        console.log(response);
+        if (response.data.error) {
+          this.authenticated.auth = false;
+          this.spinner.loading = false;
+          return;
+        }
+        if (response.data.auth) {
+          localStorage.henkelToken = response.data.token;
+          this.authenticated.auth = response.data.auth;
+          this.authenticated.name = response.data.name;
+          this.spinner.loading = false;
+          this.$router.push({name: 'home'});
           return;
         }
       } catch (e) {
@@ -116,7 +135,11 @@ export default {
     }
   },
   created() {
-    this.checkUser();
+    if(this.$route.params.emailtoken && !this.authenticated.auth) {
+      this.validateEmail(this.$route.params.emailtoken);
+    } else {
+      this.checkUser();
+    }
   }
 };
 </script>

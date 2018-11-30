@@ -124,7 +124,7 @@ export default {
     return {
       spinner: {
         loading: false,
-        color: "black",
+        color: "white",
         size: "50px"
       },
       user: {
@@ -184,6 +184,9 @@ export default {
     }
   },
   computed: {
+  },
+  created() {
+    
   },
   watch: {
     user: {
@@ -278,6 +281,10 @@ td {
 
 input::placeholder {
   color: #000000;
+}
+
+.v-spinner {
+  margin: 0px auto;
 }
 
 </style>

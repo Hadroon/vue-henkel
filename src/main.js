@@ -19,8 +19,9 @@ if (token) {
 }
 
 const routes = [
-  { path: '/', component: MainView },
-  { path: '/verif/:emailtoken', component: ValidateEmail }
+  { path: '/', component: MainView, name: 'home' },
+  // { path: '/verif/:emailtoken', component: ValidateEmail }
+  { path: '/verif/:emailtoken', component: MainView, name: 'validation' }
 ];
 
 const router = new Router({

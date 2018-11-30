@@ -52,7 +52,6 @@ export default {
         }
 
         if(response.data.auth) {
-          console.log(response);
           localStorage.henkelToken = response.data.token;
           this.authenticated.auth = response.data.auth;
           this.authenticated.name = response.data.name
