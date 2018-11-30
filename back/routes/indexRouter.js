@@ -93,47 +93,37 @@ router.post("/reg", function (req, res) {
         // save the user
         newUserObject.save(function (err) {
           if (err) throw err;
-          res.status(200).send({
-            succesMessage:
-              "Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet"
+
+          var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'gabor.muranyi@gmail.com',
+              pass: 'jelszo0500'
+            }
+          });
+
+          var mailOptions = {
+            from: 'noreply@wangaru-interactive.com',
+            to: newUserObject.email,
+            subject: 'Aktíváló email',
+            html: '<a href="http://localhost:8080/verify/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
+          };
+
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+              res.status(200).send({
+                succesMessage:
+                  "Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet"
+              });
+            }
           });
         });
-
-        // User.create(rewUser, function (err, user) {
-        //     if (err) throw err;
-
-        //     var transporter = nodemailer.createTransport({
-        //         service: 'gmail',
-        //         auth: {
-        //             user: 'gabor.muranyi@gmail.com',
-        //             pass: 'jelszo0500'
-        //         }
-        //     });
-
-        //     var mailOptions = {
-        //         from: 'noreply@wangaru-interactive.com',
-        //         to: email,
-        //         subject: 'Aktíváló email',
-        //         html: '<a href="http://localhost:8080/verify/' + newUser.local.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
-        //     };
-
-        //     transporter.sendMail(mailOptions, function (error, info) {
-        //         if (error) {
-        //             console.log(error);
-        //         } else {
-        //             console.log('Email sent: ' + info.response);
-        //         }
-        //     });
-
-        //   });
-
-        // just testing
-        // return res.status(200).send({ error: 'User crálva.' });
       }
     });
   });
-
-  //  res.status(200).send({ auth: true, token: 'token', user: 'user' });
 });
 
 router.post("/login", function (req, res) {

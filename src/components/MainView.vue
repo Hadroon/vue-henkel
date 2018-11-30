@@ -25,10 +25,15 @@
         <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
       </div>
       <div id="forms" class="anchor"></div>
-      <reg-log-wrapper v-if="!this.authenticated.auth && !spinner.loading" class="relative"/>
+      <!-- <reg-log-wrapper v-if="!this.authenticated.auth && !spinner.loading" :authenticated="authenticated" class="relative"/> -->
+      <div v-if="!this.authenticated.auth && !spinner.loading" id="logic" class="grid-forms">
+        <registration-form />
+        <log-in-form :authenticated="authenticated" />
+      </div>
       <send-codes
         v-if="this.authenticated.auth && !spinner.loading"
         :authenticated="authenticated"
+        class="relative"
       />
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt>
@@ -47,13 +52,17 @@
 import GridLoader from "vue-spinner/src/GridLoader.vue";
 import RegLogWrapper from "./RegLogWrapper.vue";
 import SendCodes from "./SendCodes.vue";
+import RegistrationForm from './RegistrationForm';
+import LogInForm from './LogInForm';
 
 export default {
   name: "MainView",
   components: {
     RegLogWrapper,
     GridLoader,
-    SendCodes
+    SendCodes,
+    RegistrationForm,
+    LogInForm
   },
   data() {
     return {
@@ -77,6 +86,11 @@ export default {
       try {
         this.spinner.loading = true;
         if (this.authenticated.auth) {
+          this.spinner.loading = false;
+          return;
+        }
+        if (!localStorage.henkelToken) {
+          this.authenticated.auth = false;
           this.spinner.loading = false;
           return;
         }

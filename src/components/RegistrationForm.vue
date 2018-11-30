@@ -1,12 +1,16 @@
 <template>
     <div>
-      <div class="left" v-if="succesMessage">
+      <div class="left" v-if="spinner.loading">
+        <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
+      </div>
+
+      <div class="left" v-if="succesMessage && !spinner.loading">
         <p>
           {{ succesMessage }}
         </p>
       </div>
 
-      <div class="left" v-if="!succesMessage">
+      <div class="left" v-if="!succesMessage && !spinner.loading">
               <h1 style="text-align: center;">Regisztráció</h1>
               <p v-if="error">{{ error }}</p>
               <form id="registration" action="/signup" method="post" novalidate="true">
@@ -80,13 +84,13 @@
                   <tr>
                     <td>
                       <legend>Jelszó*:</legend>
-                      <input type="text" value="" name="password" v-model="user.password">
+                      <input type="password" value="" name="password" v-model="user.password">
                       <i v-if="!localUserError.password" style="color: green;" class="material-icons">check_circle_outline</i>
                       <i title="Kérlek add meg a kersztneved." v-if="localUserError.password" style="color: #ed1b24;" class="material-icons">notifications_none</i>
                     </td>
                     <td>
                       <legend>Jelszó megerősítése*:</legend>
-                      <input type="text" value="" name="passwordtwo" v-model="user.passwordTwo">
+                      <input type="password" value="" name="passwordtwo" v-model="user.passwordTwo">
                       <i v-if="!localUserError.passwordTwo" style="color: green;" class="material-icons">check_circle_outline</i>
                       <i title="Kérlek add meg a kersztneved." v-if="localUserError.passwordTwo" style="color: #ed1b24;" class="material-icons">notifications_none</i>
                     </td>
@@ -107,15 +111,22 @@
 
 
 <script>
+import GridLoader from "vue-spinner/src/GridLoader.vue";
 
 export default {
   name: 'RegistrationForm',
     components: {
+      GridLoader
     },
   props: {
   },
   data() {
     return {
+      spinner: {
+        loading: false,
+        color: "black",
+        size: "50px"
+      },
       user: {
           email: null,
           password: null,
@@ -152,35 +163,24 @@ export default {
   methods: {
     handleSubmit: async function(e){
       e.preventDefault();
+      this.spinner.loading = true;
       this.error = null;
-      await this.$http.post('/reg', {
-      user: this.user
-      })
-      .then(response => {
-        if (response.data.error) {
-          return this.error = response.data.error;
-        }
-        if (response.data.succesMessage) {
+      try {
+        let response = await this.$http.post('/reg', {user: this.user});
+        if(response.data.succesMessage) {
           this.succesMessage = response.data.succesMessage;
+          this.spinner.loading = false;
+          return;
+        } else if (response.data.error) {
+          this.error = response.data.error;
+          this.spinner.loading = false;
+          return;
         }
-          })
-          .catch(function (error) {
-              console.error(error.response);
-              console.error(error.response.data);
-          });
-        },
-
-    checkValami: function() {
-      for (var key in this.localUserError) {
-        // if (this.localUserError.hasOwnProperty(key)) {
-        //   console.log(key + " -> " + this.localUserError[key]);
-        if (this.localUserError[key] === true) return this.preventSendReg = true;
-        // }
-        // console.log(key);
-        // console.log(this.localUserError[key]);
+      } catch (err) {
+        this.spinner.loading = false;
+        console.log(err);
+        return; 
       }
-        // return this.preventSendReg = false;
-        this.$set(this.preventSendReg, 'b', 2);
     }
   },
   computed: {
@@ -256,13 +256,7 @@ export default {
           this.localUserError.phoneNumber = true;
         }
 
-
-        // console.log('Ez az every: ');
-        // console.log(this.localUserError.every(val => val === false));
-
-
-        this.checkValami();
-        
+        // this.checkValami();
       },
       deep: true
     }

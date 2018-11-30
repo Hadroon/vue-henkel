@@ -1,9 +1,7 @@
 <template>
   <div class="right">
     <h1 style="text-align: center;">Belépés</h1>
-    <!-- <p v-if="this.authenticated.auth">Belépve {{this.user.email}}</p> -->
     <p v-if="this.errorMessage">{{this.errorMessage}}</p>
-    <!-- <p>Belépve {{this.user.email}}</p> -->
     <form action="/login" method="post">
       <div class="form-group">
         <legend>Email</legend>
@@ -26,9 +24,6 @@
 export default {
   name: "LogInForm",
   props: {
-    user: {
-      type: Object
-    },
     authenticated: {
       type: Object
     }
@@ -42,6 +37,7 @@ export default {
   },
   methods: {
     handleSubmit: async function(e){
+      console.log('login start');
       e.preventDefault();
       this.errorMessage = '';
       await this.$http.post('/login', {
@@ -49,6 +45,8 @@ export default {
       password: this.localPassword
       })
       .then(response => {
+        console.log("response");
+        console.log(response);
         if(response.data.error) {
           return this.errorMessage = response.data.error;
         }
