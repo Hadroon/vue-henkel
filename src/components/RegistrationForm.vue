@@ -113,9 +113,9 @@ import GridLoader from "vue-spinner/src/GridLoader.vue";
 
 export default {
   name: 'RegistrationForm',
-    components: {
-      GridLoader
-    },
+  components: {
+    GridLoader
+  },
   props: {
   },
   data() {

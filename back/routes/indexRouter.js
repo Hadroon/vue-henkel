@@ -7,7 +7,7 @@ var bcrypt = require("bcrypt-nodejs");
 const config = require("../config");
 
 var User = require("../models/users");
-// var verifyEmail = require('../controllers/emailVerify.js');
+
 
 router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
@@ -116,7 +116,7 @@ router.post("/reg", function (req, res) {
             }
           });
 
-          var mailOptions = {
+          let mailOptions = {
             from: 'noreply@wangaru-interactive.com',
             to: newUserObject.email,
             subject: 'Aktíváló email',
@@ -130,7 +130,7 @@ router.post("/reg", function (req, res) {
               console.log('Email sent: ' + info.response);
               res.status(200).send({
                 succesMessage:
-                  "Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet"
+                  "Email címedre aktíváló emailt küldtünk már. Kérünk aktíváld az email címedet."
               });
             }
           });
@@ -217,6 +217,101 @@ router.get('/validateemail/:token', async (req, res) => {
         expiresIn: 86400
       });
 
+
+      res.status(200).send({ auth: true, token: token, name: fullName });
+    }
+  } catch (err) {
+    throw err;
+  }
+});
+
+router.post('/reset', async (req, res) => {
+  console.log(req.body.email);
+  try {
+    let user = await User.findOne({ email: req.body.email });
+
+    user.passwordToken = RandomString.generate({
+      length: 64
+    });
+
+    await user.save();
+
+    if(user && user.isEmailVerified) {
+
+      var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'gabor.muranyi@gmail.com',
+          pass: 'jelszo0500'
+        }
+      });
+
+      let mailOptions = {
+        from: 'noreply@wangaru-interactive.com',
+        to: user.email,
+        subject: 'Jelszó megváltoztatása',
+        html: '<a href="http://localhost:8080/reset/' + user.passwordToken + '" class="btn btn-default">Jelszócseréhez kérlek kattints ide.</a>'
+      };
+
+
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+          res.status(200).send({
+            forgotMessage:
+              "Email címedre emailt küldtünk. Kérünk ellenőrizd."
+          });
+        }
+      });
+    } else {
+      res.status(200).send({
+        forgotMessage:
+          "Kérjük ellenőrizd a megadott emailcímet vagy aktíváld."
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(200).send({
+      forgotMessage:
+        "Hiba történt"
+    });
+  }
+});
+
+router.post('/resetpass', async (req, res) => {
+  console.log('resetpass');
+  console.log(req.body);
+
+  if (req.body.passone.length < 6 || req.body.passtwo.length < 6) {
+    return res.status(200).send({
+      error: "A jelszónak legalább 6 karakter hosszúnak kell lennie."
+    });
+  }
+
+  if (req.body.passOne !== req.body.passTwo) {
+    return res.status(200).send({ error: "A jelszavaknak meg kell egyeznie." });
+  }
+
+
+  try {
+    let user = await User.findOne({ passwordToken: req.body.token });
+
+    console.log(user.email);
+
+    if (user && user.isEmailVerified) {
+
+      user.password = user.generateHash(req.body.passone);
+      await user.save();
+      console.log(user);
+
+      let fullName = user.lastName + ' ' + user.firstName;
+
+      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
+        expiresIn: 86400
+      });
 
       res.status(200).send({ auth: true, token: token, name: fullName });
     }

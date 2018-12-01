@@ -21,6 +21,7 @@ var userSchema = mongoose.Schema({
     isEmailVerified: Boolean,
     registered: Date,
     emailVerificationToken: String,
+    passwordToken: String,
     roles: Array
 
 });

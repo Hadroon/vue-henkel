@@ -28,7 +28,8 @@
 
       <div v-if="!this.authenticated.auth && !spinner.loading" id="logic" class="grid-forms">
         <registration-form />
-        <log-in-form :authenticated="authenticated" />
+        <!-- <log-in-form v-if="!customComponentRight" :authenticated="authenticated" /> -->
+        <component v-bind:authenticated="authenticated" v-bind:is="customComponentRight"></component>
       </div>
 
       <send-codes v-if="this.authenticated.auth && !spinner.loading" :authenticated="authenticated" />
@@ -52,6 +53,7 @@ import RegistrationForm from './RegistrationForm';
 import LogInForm from './LogInForm';
 import ValidateEmail from './ValidateEmail';
 import SendCodes from './SendCodes';
+import ResetPass from './ResetPass';
 
 export default {
   name: "MainView",
@@ -60,7 +62,8 @@ export default {
     RegistrationForm,
     LogInForm,
     ValidateEmail,
-    SendCodes
+    SendCodes,
+    ResetPass
   },
   data() {
     return {
@@ -69,11 +72,20 @@ export default {
         name: null,
       },
       spinner: {
-        loading: true,
+        loading: false,
         color: "black",
         size: "50px"
-      }
+      },
+      customComponentRight: null,
+      resetToken: null
     };
+  },
+  computed: {
+  currentProperties: function() {
+    if (this.currentComponent === 'myComponent') {
+      return { foo: 'bar' }
+    }
+}  
   },
   methods: {
     upDate: function(email) {
@@ -137,8 +149,12 @@ export default {
   created() {
     if(this.$route.params.emailtoken && !this.authenticated.auth) {
       this.validateEmail(this.$route.params.emailtoken);
+    } else if (this.$route.params.passwordtoken && !this.authenticated.auth) {
+      this.customComponentRight = 'reset-pass';
+      this.resetToken = this.$route.params.passwordtoken;
     } else {
-      this.checkUser();
+        this.customComponentRight = 'log-in-form';
+        this.checkUser();  
     }
   }
 };
