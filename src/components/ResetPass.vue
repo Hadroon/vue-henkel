@@ -15,8 +15,6 @@
         class="btn btn-warning btn-lg"
         @click="handleSubmit">Belépés</button>
     </form>
-    <p>Na most reset pass.</p>
-    <p>{{this.$route.params.passwordtoken}}</p>
   </div>
 </template>
 

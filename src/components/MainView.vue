@@ -8,8 +8,8 @@
         <i style="color: green;" class="material-icons">happy</i>
         <a href>Játékleírás</a>
         <a href>Nyeremények</a>
-        <a href>{{ this.authenticated. auth }}</a>
-        <a v-if="authenticated.auth" href>{{ authenticated.name }}</a>
+        <a v-if="authenticated.auth" href="#">{{ authenticated.name }}</a>
+        <a v-if="authenticated.auth" @click="logout"  href="#">Kijelentkezés</a>
       </div>
     </div>
     <div class="content">
@@ -144,6 +144,12 @@ export default {
         console.error(e);
         throw e;
       }
+    },
+    logout: function(e) {
+      e.preventDefault();
+      localStorage.removeItem('henkelToken');
+      this.authenticated.auth = false;
+      // this.$router.push({name: 'home'});
     }
   },
   created() {

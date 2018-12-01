@@ -234,10 +234,10 @@ router.post('/reset', async (req, res) => {
       length: 64
     });
 
-    await user.save();
-
+    
     if(user && user.isEmailVerified) {
-
+      await user.save();
+      
       var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
