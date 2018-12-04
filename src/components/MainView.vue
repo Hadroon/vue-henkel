@@ -98,13 +98,13 @@ export default {
           this.spinner.loading = false;
           return;
         }
-        if (!localStorage.henkelToken) {
+        if (!localStorage.henkeltoken) {
           this.authenticated.auth = false;
           this.spinner.loading = false;
           return;
         }
         let response = await this.$http.post("/check", {
-          token: localStorage.henkelToken
+          token: localStorage.henkeltoken
         });
         if (response.data.error) {
           this.authenticated.auth = false;
@@ -133,7 +133,7 @@ export default {
           return;
         }
         if (response.data.auth) {
-          localStorage.henkelToken = response.data.token;
+          localStorage.henkeltoken = response.data.token;
           this.authenticated.auth = response.data.auth;
           this.authenticated.name = response.data.name;
           this.spinner.loading = false;
@@ -147,7 +147,7 @@ export default {
     },
     logout: function(e) {
       e.preventDefault();
-      localStorage.removeItem('henkelToken');
+      localStorage.removeItem('henkeltoken');
       this.authenticated.auth = false;
       // this.$router.push({name: 'home'});
     }

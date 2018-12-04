@@ -13,14 +13,13 @@ Vue.prototype.$http = Axios;
 Vue.use(VueMask);
 Vue.use(Router);
 
-const token = localStorage.getItem('henkelToken');
+const token = localStorage.getItem('henkeltoken');
 if (token) {
-  Vue.prototype.$http.defaults.headers.common['henkelToken'] = token
+  Vue.prototype.$http.defaults.headers.common['henkeltoken'] = token
 }
 
 const routes = [
   { path: '/', component: MainView, name: 'home' },
-  // { path: '/verif/:emailtoken', component: ValidateEmail }
   { path: '/verif/:emailtoken', component: MainView, name: 'validation' },
   { path: '/reset/:passwordtoken', component: MainView, name: 'reset' }
 ];

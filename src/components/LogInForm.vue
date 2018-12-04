@@ -83,7 +83,7 @@ export default {
           }
 
           if (response.data.auth) {
-            localStorage.henkelToken = response.data.token;
+            localStorage.henkeltoken = response.data.token;
             this.authenticated.auth = response.data.auth;
             this.authenticated.name = response.data.name;
           }
