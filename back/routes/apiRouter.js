@@ -8,8 +8,9 @@ var User = require('../models/users');
 
 router.use(function(req, res, next) {
 
-    console.log(req.get('henkeltoken'));
+    // console.log(req.get('henkeltoken'));
     // console.log(req.headers);
+    // console.log('henkeltoken: ');
     // console.log(req.header('henkeltoken'));
 
     // check header or url parameters or post parameters for token
@@ -44,6 +45,7 @@ router.use(function(req, res, next) {
 
 router.get('/token', function(req, res) {
     console.log('/token func');
+    console.log(req.decoded);
     return res.status(200).send({ message: req.get('henkeltoken')});
 });
 

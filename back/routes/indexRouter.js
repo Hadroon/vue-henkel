@@ -32,7 +32,6 @@ router.post("/reg", function (req, res) {
   var isValidEmail = regexPatt.test(reqUser.email);
 
   if (!isValidEmail) {
-    // return res.status(200).send({ auth: true, token: 'token', user: 'user' });
     return res.status(200).send({
       error: "A megadott emailcím nem megfelelő formátumú. Kérlek ellenőrizd."
     });
@@ -173,7 +172,6 @@ router.post("/login", function (req, res) {
       let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
         expiresIn: 86400
       });
-
 
       res.status(200).send({ auth: true, token: token, name: fullName });
 

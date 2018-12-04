@@ -3,7 +3,8 @@ import App from './App.vue';
 import Router from 'vue-router';
 import Axios from 'axios';
 import VueMask from 'v-mask';
-// import VueTheMask from 'vue-the-mask'
+import Datetime from 'vue-datetime';
+import 'vue-datetime/dist/vue-datetime.css';
 
 import MainView from './components/MainView.vue';
 import ValidateEmail from './components/ValidateEmail.vue';
@@ -11,6 +12,7 @@ import ValidateEmail from './components/ValidateEmail.vue';
 Vue.config.productionTip = true;
 Vue.prototype.$http = Axios;
 Vue.use(VueMask);
+Vue.use(Datetime);
 Vue.use(Router);
 
 const token = localStorage.getItem('henkeltoken');

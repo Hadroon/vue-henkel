@@ -3,6 +3,7 @@
     <div class="left">
       <p v-if="this.message">{{this.message}}</p>
       <form action="/login" method="post">
+        <datetime v-model="date"></datetime>
         <div class="form-group">
           <legend>AP kod:</legend>
           <input type="text" class="form-control" name="ap" v-model="ap">
@@ -30,7 +31,8 @@ export default {
     return {
       ap: null,
       dateOfBuy: null,
-      message: null
+      message: null,
+      date: null
     }
   },
   methods: {
