@@ -181,8 +181,7 @@ p,
 h1,
 h2,
 h3,
-legend,
-span {
+legend {
   color: #ffffff;
   font: "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -237,19 +236,19 @@ a:target:before {
 
 .left {
   grid-area: left;
-  padding: 35px 15px 55px 15px;
+  padding: 55px 15px 55px 15px;
 }
 
 .right {
   grid-area: right;
-  padding: 35px 15px 100px 15px;
+  padding: 55px 15px 100px 15px;
 }
 
 .separator {
   position: absolute;
   left: 0px;
   bottom: -6vw;
-  z-index: 1000;
+  z-index: 500;
   /* display: none; */
 }
 
@@ -257,7 +256,7 @@ a:target:before {
   position: absolute;
   left: 0px;
   top: -6vw;
-  z-index: 1000;
+  z-index: 500;
   /* display: none; */
 }
 
