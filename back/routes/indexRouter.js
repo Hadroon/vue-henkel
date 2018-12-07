@@ -280,8 +280,6 @@ router.post('/reset', async (req, res) => {
 });
 
 router.post('/resetpass', async (req, res) => {
-  console.log('resetpass');
-  console.log(req.body);
 
   if (req.body.passone.length < 6 || req.body.passtwo.length < 6) {
     return res.status(200).send({

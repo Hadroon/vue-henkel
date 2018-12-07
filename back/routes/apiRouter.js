@@ -1,9 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+// mongoose.Types.ObjectId;
 const config = require('../config');
 
-var User = require('../models/users');
+var Submission = require('../models/submission');
 
 
 router.use(function(req, res, next) {
@@ -44,10 +47,27 @@ router.get('/token', function(req, res) {
   return res.status(200).send({ message: req.get('henkeltoken')});
 });
 
-router.post('/submission', function(req, res) {
+router.post('/submission', async (req, res) => {
   let body = req.body;
+  let userId = new ObjectId(req.decoded.id);
+
+  // TODO: ellenőrizni, hogy van-e már ilyen pályázat
+
+  // TODO: ellenőrizni, hogy a játékidőbe beleesik a vásárlás időpontja, egy constans filebe tárolni
+
+  let submission = new Submission();
+  submission.userId = new ObjectId(userId);
+  submission.dateOfPurchase = body.timestampDateOfPurchase;
+  submission.apCode = body.apCode;
+  submission.dateOfSubmission = new Date().getTime();
+
+  submission.save(function (err) {
+    if (err) throw err;
+    console.log('lementve a submission');
+  });
+
   console.log('/token func');
-  console.log(body);
+  console.log(typeof body.apCode);
   return res.status(200).send({ message: 'Köszi a kódot'});
 });
 
