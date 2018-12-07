@@ -122,7 +122,7 @@ export default {
     return {
       spinner: {
         loading: false,
-        color: "white",
+        color: "blue",
         size: "50px"
       },
       user: {

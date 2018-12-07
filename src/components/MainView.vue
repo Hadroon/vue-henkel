@@ -73,7 +73,7 @@ export default {
       },
       spinner: {
         loading: false,
-        color: "black",
+        color: "blue",
         size: "50px"
       },
       customComponentRight: null,

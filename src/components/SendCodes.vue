@@ -1,17 +1,19 @@
 <template>
   <div>
-    <div class="left">
-      <p>valami</p>
+    <div v-if="this.spinner.loading" style="padding: 100px;">
+      <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
+    </div>
+    <div v-if="!this.spinner.loading" class="left">
       <p v-if="this.message">{{this.message}}</p>
-      <form action="/login" method="post">
-        <datetime v-model="date" type="datetime" zone="local" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
+      <form action="/login" method="post" novalidate="true">
         <div class="form-group">
           <legend>AP kod:</legend>
-          <input type="text" class="form-control" name="ap" v-model="ap">
+          <input type="text" v-mask="'N########'" class="form-control" name="ap" v-model="ap">
         </div>
         <div class="form-group">
           <legend>Vásárlás dátuma:</legend>
-          <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy">
+          <datetime v-model="timeOfPurchase" type="datetime" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
+          <!-- <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy"> -->
         </div>
         <button
           style="item-align: center;"
@@ -33,36 +35,31 @@ export default {
       ap: null,
       dateOfBuy: null,
       message: null,
-      date: null
+      timeOfPurchase: null,
+      newDate: null,
+      spinner: {
+        loading: false,
+        color: "blue",
+        size: "50px"
+      }
     }
   },
   methods: {
     handleSubmit: async function(e){
       e.preventDefault();
-      // this.spinner.loading = true;
-      // this.error = null;
-      console.log(this.date);
-      console.log(typeof this.date);
-      let dateObj = new Date(this.date);
-      console.log(dateObj);
-      console.log(typeof dateObj);
-      console.log(dateObj.toUTCString());
-      console.log(dateObj.toString());
-      console.log(dateObj.getUTCHours());
-      console.log(dateObj.getHours());
-      console.log('========');
-      console.log(Date.parse(this.date));
-      console.log(Date.parse(dateObj.toUTCString()));
-      console.log(Date.parse(dateObj.toString()));
+      this.spinner.loading = true;
+      let dateObj = new Date(this.timeOfPurchase);
+      let timestampDateOfPurchase = Number(new Date(this.timeOfPurchase));
 
-      return;
-      console.log('haho');
       try {
-        let response = await this.$http.get('/api/token');
+        let response = await this.$http.post('/api/submission', {
+          timestampDateOfPurchase: timestampDateOfPurchase,
+          ap: this.ap
+        });
         console.log(response);
         if(response.data.message) {
           this.message = response.data.message;
-          // this.spinner.loading = false;
+          this.spinner.loading = false;
           return;
         } else if (response.data.error) {
           this.error = response.data.error;
@@ -70,7 +67,7 @@ export default {
           return;
         }
       } catch (err) {
-        // this.spinner.loading = false;
+        this.spinner.loading = false;
         console.log(err);
         return; 
       }

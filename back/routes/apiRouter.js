@@ -8,11 +8,6 @@ var User = require('../models/users');
 
 router.use(function(req, res, next) {
 
-    // console.log(req.get('henkeltoken'));
-    // console.log(req.headers);
-    // console.log('henkeltoken: ');
-    // console.log(req.header('henkeltoken'));
-
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.get('henkeltoken');
   
@@ -22,7 +17,7 @@ router.use(function(req, res, next) {
       // verifies secret and checks exp
       jwt.verify(token, config.secret, function(err, decoded) {       
         if (err) {
-            console.log(err);
+          console.log(err);
           return res.json({ success: false, message: 'Failed to authenticate token.' });       
         } else {
           // if everything is good, save to request for use in other routes
@@ -44,9 +39,16 @@ router.use(function(req, res, next) {
   });
 
 router.get('/token', function(req, res) {
-    console.log('/token func');
-    console.log(req.decoded);
-    return res.status(200).send({ message: req.get('henkeltoken')});
+  console.log('/token func');
+  console.log(req.decoded);
+  return res.status(200).send({ message: req.get('henkeltoken')});
+});
+
+router.post('/submission', function(req, res) {
+  let body = req.body;
+  console.log('/token func');
+  console.log(body);
+  return res.status(200).send({ message: 'Köszi a kódot'});
 });
 
 module.exports = router;
