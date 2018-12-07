@@ -1,4 +1,5 @@
 <template>
+import func from './vue-temp/vue-editor-bridge';
   <div>
     <div v-if="this.spinner.loading" style="padding: 100px;">
       <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
@@ -8,14 +9,16 @@
       <form action="/login" method="post" novalidate="true">
         <div class="form-group">
           <legend>AP kod:</legend>
-          <input type="text" v-mask="'N########'" class="form-control" name="ap" v-model="ap">
+          <input type="text" v-mask="'N########'" class="form-control" name="apCode" v-model="apCode">
         </div>
         <div class="form-group">
           <legend>Vásárlás dátuma:</legend>
           <datetime v-model="timeOfPurchase" type="datetime" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
           <!-- <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy"> -->
         </div>
+        <p>{{checkSubmissionData}}</p>
         <button
+          :disabled="checkSubmissionData"
           style="item-align: center;"
           class="btn btn-warning btn-lg"
           @click="handleSubmit">Beküldés</button>
@@ -32,11 +35,11 @@ export default {
   },
   data() {
     return {
-      ap: null,
+      apCode: null,
       dateOfBuy: null,
       message: null,
       timeOfPurchase: null,
-      newDate: null,
+      submitDisabled: true,
       spinner: {
         loading: false,
         color: "blue",
@@ -44,17 +47,27 @@ export default {
       }
     }
   },
+  computed: {
+    checkSubmissionData: function() {
+      
+      if (!this.apCode) return true;
+      if (this.apCode.length != 9) return true; 
+      if (this.apCode.charAt(0).toLowerCase() != 'a' && isNaN(this.apCode.charAt(0))) return true;
+      if (isNaN(this.apCode.slice(1))) return true;
+
+      return false;
+    }
+  },
   methods: {
     handleSubmit: async function(e){
       e.preventDefault();
       this.spinner.loading = true;
-      let dateObj = new Date(this.timeOfPurchase);
       let timestampDateOfPurchase = Number(new Date(this.timeOfPurchase));
 
       try {
         let response = await this.$http.post('/api/submission', {
           timestampDateOfPurchase: timestampDateOfPurchase,
-          ap: this.ap
+          apCode: this.apCode
         });
         console.log(response);
         if(response.data.message) {

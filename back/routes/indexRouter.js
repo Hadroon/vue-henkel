@@ -13,11 +13,11 @@ router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
 
   console.log(reqUser);
-  if (reqUser.firstName.length < 4 ||
-    reqUser.lastName.length < 4 ||
+  if (reqUser.firstName.length < 2 ||
+    reqUser.lastName.length < 2 ||
     reqUser.zipCode.length < 4 ||
-    reqUser.city.length < 4 ||
-    reqUser.street.length < 4 ||
+    reqUser.city.length < 2 ||
+    reqUser.street.length < 2 ||
     reqUser.houseNumber.length < 1 ||
     reqUser.phoneNumber.length < 4
     ) {
