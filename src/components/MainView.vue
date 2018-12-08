@@ -32,8 +32,10 @@
         <component v-bind:authenticated="authenticated" v-bind:is="customComponentRight"></component>
       </div>
 
-      <send-codes v-if="this.authenticated.auth && !spinner.loading" :authenticated="authenticated" />
-      
+      <div v-if="this.authenticated.auth && !spinner.loading" id="logic">
+        <send-codes :authenticated="authenticated" />
+      </div>
+
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt>
         <img src="@/assets/nyeremenyek_3.jpg" alt>

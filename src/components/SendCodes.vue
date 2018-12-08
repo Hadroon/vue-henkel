@@ -1,28 +1,35 @@
 <template>
-import func from './vue-temp/vue-editor-bridge';
   <div>
     <div v-if="this.spinner.loading" style="padding: 100px;">
       <grid-loader :loading="spinner.loading" :color="spinner.color" :size="spinner.size"></grid-loader>
     </div>
-    <div v-if="!this.spinner.loading" class="left">
-      <p v-if="this.message">{{this.message}}</p>
-      <form action="/login" method="post" novalidate="true">
-        <div class="form-group">
-          <legend>AP kod:</legend>
-          <input type="text" v-mask="'N########'" class="form-control" name="apCode" v-model="apCode">
+    <div v-if="!this.spinner.loading">
+      <div  class="grid-forms">
+        <div class="left">
+          <p>Kódbeküldés:</p>
+          <p v-if="this.message">{{this.message}}</p>
+          <form action="/login" method="post" novalidate="true">
+            <div class="form-group">
+              <legend>AP kod:</legend>
+              <input type="text" v-mask="'N########'" class="form-control" name="apCode" v-model="apCode">
+            </div>
+            <div class="form-group">
+              <legend>Vásárlás dátuma:</legend>
+              <datetime v-model="timeOfPurchase" type="datetime" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
+              <!-- <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy"> -->
+            </div>
+            <p>{{checkSubmissionData}}</p>
+            <button
+              :disabled="checkSubmissionData"
+              style="item-align: center;"
+              class="btn btn-warning btn-lg"
+              @click="handleSubmit">Beküldés</button>
+          </form>
         </div>
-        <div class="form-group">
-          <legend>Vásárlás dátuma:</legend>
-          <datetime v-model="timeOfPurchase" type="datetime" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
-          <!-- <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy"> -->
+        <div class="right">
+          <p>Eddigi pályázataim:</p>
         </div>
-        <p>{{checkSubmissionData}}</p>
-        <button
-          :disabled="checkSubmissionData"
-          style="item-align: center;"
-          class="btn btn-warning btn-lg"
-          @click="handleSubmit">Beküldés</button>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -85,6 +92,9 @@ export default {
         return; 
       }
     }
+  },
+  created() {
+    console.log('created');
   }
 };
 </script>
