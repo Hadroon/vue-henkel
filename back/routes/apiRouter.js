@@ -41,10 +41,18 @@ router.use(function(req, res, next) {
     }
   });
 
-router.get('/token', function(req, res) {
+router.get('/getsubmissions', async (req, res) => {
+  let userId = req.decoded.id;
   console.log('/token func');
   console.log(req.decoded);
-  return res.status(200).send({ message: req.get('henkeltoken')});
+  let subbmissions;
+  try {
+    subbmissions = await Submission.find ({ userId: userId} );
+    console.log(subbmissions);
+  } catch(err) {
+    throw err;
+  }
+  return res.status(200).send({ message: subbmissions });
 });
 
 router.post('/submission', async (req, res) => {

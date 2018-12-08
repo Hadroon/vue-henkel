@@ -7,7 +7,7 @@
       <div  class="grid-forms">
         <div class="left">
           <p>Kódbeküldés:</p>
-          <p v-if="this.message">{{this.message}}</p>
+          <p v-if="this.messageCode">{{this.messageCode}}</p>
           <form action="/login" method="post" novalidate="true">
             <div class="form-group">
               <legend>AP kod:</legend>
@@ -28,6 +28,11 @@
         </div>
         <div class="right">
           <p>Eddigi pályázataim:</p>
+          <ul id="example-1">
+            <li v-for="submission in submissions" :key="submission._id">
+              {{ submission.apCode }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -44,9 +49,10 @@ export default {
     return {
       apCode: null,
       dateOfBuy: null,
-      message: null,
+      messageCode: null,
       timeOfPurchase: null,
       submitDisabled: true,
+      submissions: null,
       spinner: {
         loading: false,
         color: "blue",
@@ -78,7 +84,7 @@ export default {
         });
         console.log(response);
         if(response.data.message) {
-          this.message = response.data.message;
+          this.messageCode = response.data.message;
           this.spinner.loading = false;
           return;
         } else if (response.data.error) {
@@ -91,10 +97,35 @@ export default {
         console.log(err);
         return; 
       }
+    },
+    getSubbmissions: async function() {
+      // TODO: local spinner eddigi beküldéseim betöltése
+      // TODO: handle error
+      // this.spinner.loading = true;
+
+      try {
+        let response = await this.$http.get('/api/getsubmissions');
+        console.log(response);
+        if(response.data.message) {
+          this.submissions = response.data.message;
+          this.spinner.loading = false;
+          return;
+        } else if (response.data.error) {
+          this.error = response.data.error;
+          this.spinner.loading = false;
+          return;
+        }
+      } catch (err) {
+        this.spinner.loading = false;
+        console.log(err);
+        return; 
+      }
+
     }
   },
   created() {
     console.log('created');
+    this.getSubbmissions();
   }
 };
 </script>
