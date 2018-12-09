@@ -29,6 +29,7 @@
         <div class="right">
           <h2 v-if="submissions" class="bold">Eddigi pályázataim ({{submissions.length}}):</h2>
           <h2 v-if="!submissions" class="bold">Eddigi pályázataim (0):</h2>
+          <!-- TODO: Better table -->
           <table class="submissiontable" width="100%">
             <tr>
               <th align="left" width="35%">Beküldés ideje</th>
@@ -86,21 +87,18 @@ export default {
       this.spinner.loading = true;
       let timestampDateOfPurchase = Number(new Date(this.timeOfPurchase));
       let dateNow = new Date().getTime();
-      console.log(dateNow);
-      console.log(typeof dateNow);
-
       try {
         let response = await this.$http.post('/api/submission', {
           timestampDateOfPurchase: timestampDateOfPurchase,
           apCode: this.apCode
         });
-        console.log(response);
         if(response.data.message) {
           this.messageCode = response.data.message;
+          let newDate = Number(new Date().getTime());
           this.submissions.push({
-            timestampDateOfPurchase: timestampDateOfPurchase,
+            dateOfPurchase: timestampDateOfPurchase,
+            dateOfSubmission: newDate,
             apCode: this.apCode,
-            dateOfSubmission: dateNow
           });
           this.spinner.loading = false;
           return;
@@ -122,20 +120,9 @@ export default {
 
       try {
         let response = await this.$http.get('/api/getsubmissions');
-        console.log(response);
-        console.log(typeof response);
         this.submissions = response.data.message;
         this.spinner.loading = false;
         return;
-        // if(response.data.message) {
-        //   this.submissions = response.data.message;
-        //   this.spinner.loading = false;
-        //   return;
-        // } else if (response.data.nocode) {
-        //   this.noCode = response.data.nocode;
-        //   this.spinner.loading = false;
-        //   return;
-        // }
       } catch (err) {
         this.spinner.loading = false;
         console.log(err);
@@ -148,12 +135,32 @@ export default {
       // TODO: not perfect, ex. hour two digit
 
       let date = new Date(timestamp);
+      let dateDay = date.getDate();
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let months = date.getMonth()+1;
+
+      if (dateDay <= 9) {
+        dateDay = this.addZeroBefore(dateDay);
+      }
+      if (hours <= 9) {
+        hours = this.addZeroBefore(hours);
+      }
+      if (minutes <= 9) {
+        minutes = this.addZeroBefore(minutes);
+      }
+      if (months <= 9) {
+        months = this.addZeroBefore(months);
+      }
       let formatedDate = date.getFullYear() + '.' +
-        (date.getMonth()+1) + '.' +
-        date.getDate() + ' ' +
-        date.getHours() + ':' +
-        date.getMinutes();
+        months + '.' +
+        dateDay + ' ' +
+        hours + ':' +
+        minutes;
       return formatedDate;
+    },
+    addZeroBefore(stringVal) {
+      return '0' + stringVal;
     }
   },
   created() {

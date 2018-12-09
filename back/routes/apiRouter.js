@@ -20,7 +20,6 @@ router.use(function(req, res, next) {
       // verifies secret and checks exp
       jwt.verify(token, config.secret, function(err, decoded) {       
         if (err) {
-          console.log(err);
           return res.json({ success: false, message: 'Failed to authenticate token.' });       
         } else {
           // if everything is good, save to request for use in other routes
@@ -46,10 +45,8 @@ router.get('/getsubmissions', async (req, res) => {
   let subbmissions;
   try {
     subbmissions = await Submission.find ({ userId: userId} );
-    console.log(subbmissions);
     return res.status(200).send({ message: subbmissions });
   } catch(err) {
-    console.log(err);
     return res.status(200).send({ message: [], nocode: 'Még nincs kódbeküldésed.' });
   }
 });
@@ -70,12 +67,9 @@ router.post('/submission', async (req, res) => {
 
   submission.save(function (err) {
     if (err) throw err;
-    console.log('lementve a submission');
   });
 
-  console.log('/token func');
-  console.log(typeof body.apCode);
-  return res.status(200).send({ message: 'Done'});
+  return res.status(200).send({ message: 'Köszi a kódot'});
 });
 
 module.exports = router;
