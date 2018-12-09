@@ -13,11 +13,11 @@ router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
 
   console.log(reqUser);
-  if (reqUser.firstName.length < 4 ||
-    reqUser.lastName.length < 4 ||
+  if (reqUser.firstName.length < 2 ||
+    reqUser.lastName.length < 2 ||
     reqUser.zipCode.length < 4 ||
-    reqUser.city.length < 4 ||
-    reqUser.street.length < 4 ||
+    reqUser.city.length < 2 ||
+    reqUser.street.length < 2 ||
     reqUser.houseNumber.length < 1 ||
     reqUser.phoneNumber.length < 4
     ) {
@@ -32,7 +32,6 @@ router.post("/reg", function (req, res) {
   var isValidEmail = regexPatt.test(reqUser.email);
 
   if (!isValidEmail) {
-    // return res.status(200).send({ auth: true, token: 'token', user: 'user' });
     return res.status(200).send({
       error: "A megadott emailcím nem megfelelő formátumú. Kérlek ellenőrizd."
     });
@@ -174,7 +173,6 @@ router.post("/login", function (req, res) {
         expiresIn: 86400
       });
 
-
       res.status(200).send({ auth: true, token: token, name: fullName });
 
     } else {
@@ -282,8 +280,6 @@ router.post('/reset', async (req, res) => {
 });
 
 router.post('/resetpass', async (req, res) => {
-  console.log('resetpass');
-  console.log(req.body);
 
   if (req.body.passone.length < 6 || req.body.passtwo.length < 6) {
     return res.status(200).send({

@@ -122,7 +122,7 @@ export default {
     return {
       spinner: {
         loading: false,
-        color: "white",
+        color: "blue",
         size: "50px"
       },
       user: {
@@ -193,13 +193,13 @@ export default {
       handler: function(val) {
         console.log(val);
 
-        if (val.firstName && val.firstName.length >= 4) {
+        if (val.firstName && val.firstName.length >= 2) {
           this.localUserError.firstName = false;
         } else {
           this.localUserError.firstName = true;
         }
 
-        if (val.lastName && val.lastName.length >= 4) {
+        if (val.lastName && val.lastName.length >= 2) {
           this.localUserError.lastName = false;
         } else {
           this.localUserError.lastName = true;
@@ -211,13 +211,13 @@ export default {
           this.localUserError.zipCode = true;
         }
 
-        if (val.city && val.city.length >= 4) {
+        if (val.city && val.city.length >= 2) {
           this.localUserError.city = false;
         } else {
           this.localUserError.city = true;
         }
 
-        if (val.street && val.street.length >= 4) {
+        if (val.street && val.street.length >= 2) {
           this.localUserError.street = false;
         } else {
           this.localUserError.street = true;

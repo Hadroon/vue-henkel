@@ -32,8 +32,10 @@
         <component v-bind:authenticated="authenticated" v-bind:is="customComponentRight"></component>
       </div>
 
-      <send-codes v-if="this.authenticated.auth && !spinner.loading" :authenticated="authenticated" />
-      
+      <div v-if="this.authenticated.auth && !spinner.loading" id="logic">
+        <send-codes :authenticated="authenticated" />
+      </div>
+
       <div class="relative">
         <img class="separator-upper" src="@/assets/separator.png" alt>
         <img src="@/assets/nyeremenyek_3.jpg" alt>
@@ -73,7 +75,7 @@ export default {
       },
       spinner: {
         loading: false,
-        color: "black",
+        color: "blue",
         size: "50px"
       },
       customComponentRight: null,
@@ -98,13 +100,13 @@ export default {
           this.spinner.loading = false;
           return;
         }
-        if (!localStorage.henkelToken) {
+        if (!localStorage.henkeltoken) {
           this.authenticated.auth = false;
           this.spinner.loading = false;
           return;
         }
         let response = await this.$http.post("/check", {
-          token: localStorage.henkelToken
+          token: localStorage.henkeltoken
         });
         if (response.data.error) {
           this.authenticated.auth = false;
@@ -133,7 +135,7 @@ export default {
           return;
         }
         if (response.data.auth) {
-          localStorage.henkelToken = response.data.token;
+          localStorage.henkeltoken = response.data.token;
           this.authenticated.auth = response.data.auth;
           this.authenticated.name = response.data.name;
           this.spinner.loading = false;
@@ -147,7 +149,7 @@ export default {
     },
     logout: function(e) {
       e.preventDefault();
-      localStorage.removeItem('henkelToken');
+      localStorage.removeItem('henkeltoken');
       this.authenticated.auth = false;
       // this.$router.push({name: 'home'});
     }
@@ -181,8 +183,7 @@ p,
 h1,
 h2,
 h3,
-legend,
-span {
+legend {
   color: #ffffff;
   font: "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -237,19 +238,19 @@ a:target:before {
 
 .left {
   grid-area: left;
-  padding: 35px 15px 55px 15px;
+  padding: 55px 15px 55px 15px;
 }
 
 .right {
   grid-area: right;
-  padding: 35px 15px 100px 15px;
+  padding: 55px 15px 100px 15px;
 }
 
 .separator {
   position: absolute;
   left: 0px;
   bottom: -6vw;
-  z-index: 1000;
+  z-index: 500;
   /* display: none; */
 }
 
@@ -257,7 +258,7 @@ a:target:before {
   position: absolute;
   left: 0px;
   top: -6vw;
-  z-index: 1000;
+  z-index: 500;
   /* display: none; */
 }
 
@@ -358,6 +359,10 @@ a:target:before {
 .icon {
   width: 20px;
   color: green;
+}
+
+.bold {
+  font-weight: bold;
 }
 </style>
 
