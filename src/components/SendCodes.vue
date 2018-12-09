@@ -27,14 +27,15 @@
           </form>
         </div>
         <div class="right">
-          <h2 class="bold">Eddigi pályázataim ({{submissions.length}}):</h2>
+          <h2 v-if="submissions" class="bold">Eddigi pályázataim ({{submissions.length}}):</h2>
+          <h2 v-if="!submissions" class="bold">Eddigi pályázataim (0):</h2>
           <table class="submissiontable" width="100%">
             <tr>
               <th align="left" width="35%">Beküldés ideje</th>
               <th align="left" width="30%">AP kód:</th>
               <th align="left" width="35%">Vásárlás ideje:</th>
             </tr>
-            <tr v-for="submission in submissions" :key="submission._id">
+            <tr v-if="submissions" v-for="submission in submissions" :key="submission._id">
               <td>{{ timestampToDate(submission.dateOfSubmission) }}</td>
               <td>{{ submission.apCode }}</td>
               <td>{{ timestampToDate(submission.dateOfPurchase) }}</td>
@@ -60,6 +61,7 @@ export default {
       timeOfPurchase: null,
       submitDisabled: true,
       submissions: null,
+      noCode: null,
       spinner: {
         loading: false,
         color: "blue",
@@ -83,6 +85,9 @@ export default {
       e.preventDefault();
       this.spinner.loading = true;
       let timestampDateOfPurchase = Number(new Date(this.timeOfPurchase));
+      let dateNow = new Date().getTime();
+      console.log(dateNow);
+      console.log(typeof dateNow);
 
       try {
         let response = await this.$http.post('/api/submission', {
@@ -92,6 +97,11 @@ export default {
         console.log(response);
         if(response.data.message) {
           this.messageCode = response.data.message;
+          this.submissions.push({
+            timestampDateOfPurchase: timestampDateOfPurchase,
+            apCode: this.apCode,
+            dateOfSubmission: dateNow
+          });
           this.spinner.loading = false;
           return;
         } else if (response.data.error) {
@@ -113,15 +123,19 @@ export default {
       try {
         let response = await this.$http.get('/api/getsubmissions');
         console.log(response);
-        if(response.data.message) {
-          this.submissions = response.data.message;
-          this.spinner.loading = false;
-          return;
-        } else if (response.data.error) {
-          this.error = response.data.error;
-          this.spinner.loading = false;
-          return;
-        }
+        console.log(typeof response);
+        this.submissions = response.data.message;
+        this.spinner.loading = false;
+        return;
+        // if(response.data.message) {
+        //   this.submissions = response.data.message;
+        //   this.spinner.loading = false;
+        //   return;
+        // } else if (response.data.nocode) {
+        //   this.noCode = response.data.nocode;
+        //   this.spinner.loading = false;
+        //   return;
+        // }
       } catch (err) {
         this.spinner.loading = false;
         console.log(err);
@@ -130,21 +144,15 @@ export default {
 
     },
     timestampToDate(timestamp) {
-      // return new Date(timestamp).toISOString();
+
+      // TODO: not perfect, ex. hour two digit
+
       let date = new Date(timestamp);
       let formatedDate = date.getFullYear() + '.' +
         (date.getMonth()+1) + '.' +
         date.getDate() + ' ' +
         date.getHours() + ':' +
         date.getMinutes();
-      // datevalues = [
-      //   date.getFullYear(),
-      //   date.getMonth()+1,
-      //   date.getDate(),
-      //   date.getHours(),
-      //   date.getMinutes(),
-      //   date.getSeconds(),
-      // ];
       return formatedDate;
     }
   },

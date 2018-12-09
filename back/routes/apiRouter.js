@@ -43,15 +43,15 @@ router.use(function(req, res, next) {
 
 router.get('/getsubmissions', async (req, res) => {
   let userId = req.decoded.id;
-  console.log('/token func');
-  console.log(req.decoded);
   let subbmissions;
   try {
     subbmissions = await Submission.find ({ userId: userId} );
+    console.log(subbmissions);
+    return res.status(200).send({ message: subbmissions });
   } catch(err) {
-    throw err;
+    console.log(err);
+    return res.status(200).send({ message: [], nocode: 'Még nincs kódbeküldésed.' });
   }
-  return res.status(200).send({ message: subbmissions });
 });
 
 router.post('/submission', async (req, res) => {
@@ -75,7 +75,7 @@ router.post('/submission', async (req, res) => {
 
   console.log('/token func');
   console.log(typeof body.apCode);
-  return res.status(200).send({ message: 'Köszi a kódot'});
+  return res.status(200).send({ message: 'Done'});
 });
 
 module.exports = router;
