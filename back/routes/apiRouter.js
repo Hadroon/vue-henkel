@@ -48,7 +48,6 @@ router.get('/getsubmissions', async (req, res) => {
   let subbmissions;
   try {
     subbmissions = await Submission.find ({ userId: userId} );
-    console.log(subbmissions);
   } catch(err) {
     throw err;
   }

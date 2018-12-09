@@ -360,6 +360,10 @@ a:target:before {
   width: 20px;
   color: green;
 }
+
+.bold {
+  font-weight: bold;
+}
 </style>
 
 

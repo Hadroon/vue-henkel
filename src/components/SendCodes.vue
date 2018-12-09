@@ -6,7 +6,7 @@
     <div v-if="!this.spinner.loading">
       <div  class="grid-forms">
         <div class="left">
-          <p>Kódbeküldés:</p>
+          <h2 class="bold">Kódbeküldés:</h2>
           <p v-if="this.messageCode">{{this.messageCode}}</p>
           <form action="/login" method="post" novalidate="true">
             <div class="form-group">
@@ -27,12 +27,19 @@
           </form>
         </div>
         <div class="right">
-          <p>Eddigi pályázataim:</p>
-          <ul id="example-1">
-            <li v-for="submission in submissions" :key="submission._id">
-              {{ submission.apCode }}
-            </li>
-          </ul>
+          <h2 class="bold">Eddigi pályázataim ({{submissions.length}}):</h2>
+          <table class="submissiontable" width="100%">
+            <tr>
+              <th align="left" width="35%">Beküldés ideje</th>
+              <th align="left" width="30%">AP kód:</th>
+              <th align="left" width="35%">Vásárlás ideje:</th>
+            </tr>
+            <tr v-for="submission in submissions" :key="submission._id">
+              <td>{{ timestampToDate(submission.dateOfSubmission) }}</td>
+              <td>{{ submission.apCode }}</td>
+              <td>{{ timestampToDate(submission.dateOfPurchase) }}</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -121,6 +128,24 @@ export default {
         return; 
       }
 
+    },
+    timestampToDate(timestamp) {
+      // return new Date(timestamp).toISOString();
+      let date = new Date(timestamp);
+      let formatedDate = date.getFullYear() + '.' +
+        (date.getMonth()+1) + '.' +
+        date.getDate() + ' ' +
+        date.getHours() + ':' +
+        date.getMinutes();
+      // datevalues = [
+      //   date.getFullYear(),
+      //   date.getMonth()+1,
+      //   date.getDate(),
+      //   date.getHours(),
+      //   date.getMinutes(),
+      //   date.getSeconds(),
+      // ];
+      return formatedDate;
     }
   },
   created() {
@@ -147,6 +172,10 @@ export default {
 .theme-red .vdatetime-time-picker__item--selected,
 .theme-red .vdatetime-popup__actions__button {
   color: #444;
+}
+
+.submissiontable {
+  color: #ffffff;
 }
 
 </style>
