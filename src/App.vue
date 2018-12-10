@@ -10,6 +10,7 @@
 
 <script>
 import MainView from './components/MainView.vue';
+import Admin from './components/Admin.vue';
 
 export default {
   name: 'app',
