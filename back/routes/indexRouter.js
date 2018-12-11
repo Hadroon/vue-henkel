@@ -184,7 +184,7 @@ router.post("/login", function (req, res) {
         expiresIn: 86400
       });
 
-      res.status(200).send({ auth: true, token: token, name: fullName });
+      res.status(200).send({ auth: true, token: token, name: fullName, roles: user.roles });
 
     } else {
       return res.status(200).send({ error: "Hiba történt. Kérlek ellenőrizd a belépési adatokat." });

@@ -84,6 +84,9 @@ export default {
             localStorage.henkeltoken = response.data.token;
             this.authenticated.auth = response.data.auth;
             this.authenticated.name = response.data.name;
+            if (response.data.roles.includes('admin')) {
+              this.authenticated.isAdmin = true;
+            }
           }
         })
         .catch(function(error) {

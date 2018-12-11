@@ -159,7 +159,9 @@ export default {
       e.preventDefault();
       localStorage.removeItem('henkeltoken');
       this.authenticated.auth = false;
-      // this.$router.push({name: 'home'});
+      this.authenticated.name = null;
+      this.authenticated.isAdmin = false;
+      return;
     }
   },
   created() {

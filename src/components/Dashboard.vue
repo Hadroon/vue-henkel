@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="isAdmin">
 
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
       <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
@@ -181,10 +181,12 @@ export default {
   data() {
     return {
       message: null,
-      submissions: null
+      submissions: null,
+      isAdmin: false
     }
   },
   created() {
+    this.check();
     this.loadSubmissions();
   },
   methods: {
@@ -203,7 +205,21 @@ export default {
         console.error(e);
         throw e;
       }
-    }
+    },
+    check: async function() {
+      try {
+        let response = await this.$http.get("/admin/check");
+        console.log(response);
+        if (response.data.error) {
+          return this.$router.push('/');
+        }
+        this.isAdmin = response.data.isAdmin;
+        return;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    },
   }  
 }
 </script>

@@ -9,6 +9,9 @@ var User = require('../models/users');
 var Submission = require('../models/submission');
 
 router.use(function(req, res, next) {
+
+// TODO: supercheck, security
+
     var token = req.body.token || req.get('henkeltoken');
     if (token) {
       jwt.verify(token, config.secret, function(err, decoded) {       
@@ -18,14 +21,19 @@ router.use(function(req, res, next) {
           let isAdmin = decoded.roles.includes('admin');
           if (isAdmin) {
             req.decoded = decoded;   
-            next();
+            return next();
           }
+          return res.status(200).send({ error: 'Not found'});
         }
       });
     } else {
       return res.status(404).send('Az oldal nem található.');
     }
   });
+
+router.get('/check', async (req, res) => {
+  res.status(200).send({ isAdmin: true });
+});
 
 router.get('/getsubmissions', async (req, res) => {
   try {
