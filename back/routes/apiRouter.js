@@ -7,6 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const config = require('../config');
 
 var Submission = require('../models/submission');
+var User = require('../models/users');
 
 
 router.use(function(req, res, next) {
@@ -16,7 +17,6 @@ router.use(function(req, res, next) {
   
     // decode token
     if (token) {
-  
       // verifies secret and checks exp
       jwt.verify(token, config.secret, function(err, decoded) {       
         if (err) {
@@ -27,16 +27,11 @@ router.use(function(req, res, next) {
           next();
         }
       });
-  
     } else {
-  
-      // if there is no token
-      // return an error
       return res.status(404).send({ 
           success: false, 
           message: 'No token provided.' 
       });
-  
     }
   });
 
@@ -55,6 +50,8 @@ router.post('/submission', async (req, res) => {
   let body = req.body;
   let userId = new ObjectId(req.decoded.id);
 
+  // TODO: mindent lementeni és status kódok kellenek, hogy minden beküldés visszakereshető legyen
+
   // TODO: ellenőrizni, hogy van-e már ilyen pályázat
 
   // TODO: ellenőrizni, hogy a játékidőbe beleesik a vásárlás időpontja, egy constans filebe tárolni
@@ -64,6 +61,7 @@ router.post('/submission', async (req, res) => {
   submission.dateOfPurchase = body.timestampDateOfPurchase;
   submission.apCode = body.apCode;
   submission.dateOfSubmission = new Date().getTime();
+  submission.email = req.decoded.email;
 
   submission.save(function (err) {
     if (err) throw err;

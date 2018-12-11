@@ -4,10 +4,10 @@ var nodemailer = require("nodemailer");
 var RandomString = require("randomstring");
 const jwt = require("jsonwebtoken");
 var bcrypt = require("bcrypt-nodejs");
+// var ObjectId = require('mongoose').Types.ObjectId; 
 const config = require("../config");
 
 var User = require("../models/users");
-
 
 router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
@@ -180,7 +180,7 @@ router.post("/login", function (req, res) {
 
       let fullName = user.lastName + ' ' + user.firstName;
 
-      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
+      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName, email: user.email }, config.secret, {
         expiresIn: 86400
       });
 
@@ -192,10 +192,12 @@ router.post("/login", function (req, res) {
   });
 });
 
-router.post('/check', function (req, res) {
+router.post('/check', async (req, res) => {
   if (!req.body.token) return;
   try {
     var decoded = jwt.verify(req.body.token, config.secret);
+    let user = await User.findById(decoded.id, null, {lean: true});
+    if(!user) return res.status(200).send({ error: true });
   }
   catch (err) {
     return res.status(200).send({ error: true });
@@ -216,7 +218,7 @@ router.get('/validateemail/:token', async (req, res) => {
 
       let fullName = user.lastName + ' ' + user.firstName;
 
-      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
+      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName, email: user.email }, config.secret, {
         expiresIn: 86400
       });
 
@@ -300,7 +302,7 @@ router.post('/resetpass', async (req, res) => {
 
       let fullName = user.lastName + ' ' + user.firstName;
 
-      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName }, config.secret, {
+      let token = jwt.sign({ id: user._id, roles: user.roles, name: fullName, email: user.email }, config.secret, {
         expiresIn: 86400
       });
 

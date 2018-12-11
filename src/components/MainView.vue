@@ -112,6 +112,7 @@ export default {
         });
         if (response.data.error) {
           this.authenticated.auth = false;
+          localStorage.removeItem('henkeltoken');
           this.spinner.loading = false;
           return;
         }

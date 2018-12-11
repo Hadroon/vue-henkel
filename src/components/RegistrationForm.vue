@@ -100,7 +100,6 @@
                   valamint az <a href="#">Adatvédelmi tájékoztatót</a>.</p>
                 <p><input type="checkbox" name="gdpr" value="1" v-model="user.correctAge"> Nyilatokzom, hogy elmúltam 18 éves.</p>
                 <div style="align-items: center;">
-                  <!-- <button id="regbutt" @click="handleSubmit">Regisztráció</button> -->
                   <button id="regbutt" :disabled="canEnableRegistration" @click="handleSubmit">Regisztráció</button>
                 </div>
               </form>
@@ -268,9 +267,6 @@ export default {
         } else {
           this.localUserError.correctAge = true;
         }
-
-
-        // this.canEnableRegistration();
       },
       deep: true
     }

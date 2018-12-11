@@ -10,6 +10,7 @@ var submissionSchema = mongoose.Schema({
     apCode: { type: String, required: true },
     dateOfSubmission: { type: Number, required: true },
     winnings: { type: [String] },
+    email: { type: String, required: true }
 
 });
 
