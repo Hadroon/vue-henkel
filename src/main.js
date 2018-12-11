@@ -18,7 +18,7 @@ Vue.use(Router);
 
 const token = localStorage.getItem('henkeltoken');
 if (token) {
-  Vue.prototype.$http.defaults.headers.common['henkeltoken'] = token
+  Vue.prototype.$http.defaults.headers.common['henkeltoken'] = token;
 }
 
 const routes = [

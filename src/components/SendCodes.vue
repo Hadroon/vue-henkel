@@ -119,7 +119,7 @@ export default {
       // this.spinner.loading = true;
 
       try {
-        let response = await this.$http.get('/api/getsubmissions');
+        let response = await this.$http.get('/api/getsubmissions', {headers: {henkeltoken: localStorage.getItem('henkeltoken')}});
         this.submissions = response.data.message;
         this.spinner.loading = false;
         return;
