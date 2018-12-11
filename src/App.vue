@@ -10,12 +10,13 @@
 
 <script>
 import MainView from './components/MainView.vue';
-import Admin from './components/Admin.vue';
+import Dashboard from './components/Dashboard.vue';
 
 export default {
   name: 'app',
   components: {
-    MainView
+    MainView,
+    Dashboard
   }
 }
 </script>

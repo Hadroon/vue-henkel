@@ -76,8 +76,6 @@ export default {
           password: this.localPassword
         })
         .then(response => {
-          console.log("response");
-          console.log(response);
           if (response.data.error) {
             return (this.errorMessage = response.data.error);
           }
@@ -105,7 +103,6 @@ export default {
       this.spinner.loading = true;
       this.canShowForgot = false;
       await this.$http.post("/reset", { email: this.localEmail }).then(response => {
-        console.log(response);
         this.forgotMessage = response.data.forgotMessage;
         this.spinner.loading = false;
         }).catch(function(error) {console.error(error);});

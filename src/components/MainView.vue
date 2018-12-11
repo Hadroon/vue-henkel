@@ -8,6 +8,7 @@
         <i style="color: green;" class="material-icons">happy</i>
         <a href>Játékleírás</a>
         <a href>Nyeremények</a>
+        <a v-if="authenticated.isAdmin" href="dashboard">Admin oldal</a>
         <a v-if="authenticated.auth" href="#">{{ authenticated.name }}</a>
         <a v-if="authenticated.auth" @click="logout"  href="#">Kijelentkezés</a>
       </div>
@@ -72,6 +73,7 @@ export default {
       authenticated: {
         auth: false,
         name: null,
+        isAdmin: false
       },
       spinner: {
         loading: false,
@@ -116,6 +118,11 @@ export default {
         if (response.data.auth) {
           this.authenticated.auth = response.data.auth;
           this.authenticated.name = response.data.name;
+          if (response.data.roles.includes('admin')) {
+            this.authenticated.isAdmin = true;
+          }
+          console.log('isAdmin?');
+          console.log(this.authenticated.isAdmin);
           this.spinner.loading = false;
           return;
         }

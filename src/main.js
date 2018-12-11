@@ -8,7 +8,7 @@ import 'vue-datetime/dist/vue-datetime.css';
 
 import MainView from './components/MainView.vue';
 import ValidateEmail from './components/ValidateEmail.vue';
-import Admin from './components/Admin.vue';
+import Dashboard from './components/Dashboard.vue';
 
 Vue.config.productionTip = true;
 Vue.prototype.$http = Axios;
@@ -22,10 +22,10 @@ if (token) {
 }
 
 const routes = [
-  { path: '/', component: MainView, name: 'Henkel promóció' },
+  { path: '/', component: MainView, name: 'home' },
   { path: '/verif/:emailtoken', component: MainView, name: 'validation' },
   { path: '/reset/:passwordtoken', component: MainView, name: 'reset' },
-  { path: '/admin', component: Admin, name: 'Admin' }
+  { path: '/dashboard', component: Dashboard, name: 'dashboard' }
 ];
 
 const router = new Router({

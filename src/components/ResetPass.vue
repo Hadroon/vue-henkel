@@ -42,8 +42,6 @@ export default {
           token: this.$route.params.passwordtoken
         })
         .then(response => {
-          console.log("response");
-          console.log(response);
           if (response.data.error) {
             return (this.errorMessage = response.data.error);
           }

@@ -12,7 +12,6 @@ var User = require("../models/users");
 router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
 
-  console.log(reqUser);
   if (reqUser.firstName.length < 2 ||
     reqUser.lastName.length < 2 ||
     reqUser.zipCode.length < 4 ||
@@ -87,6 +86,8 @@ router.post("/reg", function (req, res) {
         // ===========================================
       } else {
 
+        // TODO: ha van user és az email címe katív akkor belogineltetni.
+
         delete reqUser.passwordTwo;
         var newUserObject = new User(reqUser);
 
@@ -97,7 +98,17 @@ router.post("/reg", function (req, res) {
         newUserObject.registered = date;
 
         newUserObject.isEmailVerified = false;
-        newUserObject.roles = ["user"];
+
+        let adminAccounts = ['csilla.varfoldi@wangaru-interactive.com',
+          'gabor.muranyi@wangaru-interactive.com'];
+
+        let isAdmin = adminAccounts.includes(newUserObject.email);
+
+        if (isAdmin) {
+          newUserObject.roles = ["user", "admin"];
+        } else {
+          newUserObject.roles = ["user"];
+        }
 
         newUserObject.emailVerificationToken = RandomString.generate({
           length: 64
@@ -182,7 +193,6 @@ router.post("/login", function (req, res) {
 });
 
 router.post('/check', function (req, res) {
-  console.log('check user');
   if (!req.body.token) return;
   try {
     var decoded = jwt.verify(req.body.token, config.secret);
@@ -190,24 +200,19 @@ router.post('/check', function (req, res) {
   catch (err) {
     return res.status(200).send({ error: true });
   }
+
   if (decoded.name) {
-    return res.status(200).send({ auth: true, name: decoded.name });
+    return res.status(200).send({ auth: true, name: decoded.name, roles: decoded.roles });
   }
   return res.status(200).send({ error: true });
 });
 
 router.get('/validateemail/:token', async (req, res) => {
-  console.log('validate');
-  console.log(req.params.token);
   try {
     let user = await User.findOne({ emailVerificationToken: req.params.token });
-
-    console.log(user.email);
-
     if (user) {
       user.isEmailVerified = true;
       await user.save();
-      console.log(user);
 
       let fullName = user.lastName + ' ' + user.firstName;
 
@@ -224,18 +229,15 @@ router.get('/validateemail/:token', async (req, res) => {
 });
 
 router.post('/reset', async (req, res) => {
-  console.log(req.body.email);
   try {
     let user = await User.findOne({ email: req.body.email });
-
     user.passwordToken = RandomString.generate({
       length: 64
     });
 
-    
     if(user && user.isEmailVerified) {
       await user.save();
-      
+
       var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -250,8 +252,6 @@ router.post('/reset', async (req, res) => {
         subject: 'Jelszó megváltoztatása',
         html: '<a href="http://localhost:8080/reset/' + user.passwordToken + '" class="btn btn-default">Jelszócseréhez kérlek kattints ide.</a>'
       };
-
-
 
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
@@ -291,17 +291,12 @@ router.post('/resetpass', async (req, res) => {
     return res.status(200).send({ error: "A jelszavaknak meg kell egyeznie." });
   }
 
-
   try {
     let user = await User.findOne({ passwordToken: req.body.token });
-
-    console.log(user.email);
-
     if (user && user.isEmailVerified) {
 
       user.password = user.generateHash(req.body.passone);
       await user.save();
-      console.log(user);
 
       let fullName = user.lastName + ' ' + user.firstName;
 

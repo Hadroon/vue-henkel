@@ -11,6 +11,7 @@ var history = require('connect-history-api-fallback');
 
 var indexRouter = require('./back/routes/indexRouter');
 var apiRouter = require('./back/routes/apiRouter');
+var adminRouter = require('./back/routes/adminRouter');
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/vue-henkel'
 
@@ -24,8 +25,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
 app.use('/api/', apiRouter);
+app.use('/admin/', adminRouter);
 app.use(serveStatic(path.join(__dirname, 'dist')));
-app.use(history())
+app.use(history());
 app.use(serveStatic(path.join(__dirname, 'dist')));
 
 const port = process.env.PORT || 8080;

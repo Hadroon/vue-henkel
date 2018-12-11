@@ -191,7 +191,6 @@ export default {
   watch: {
     user: {
       handler: function(val) {
-        console.log(val);
 
         if (val.firstName && val.firstName.length >= 2) {
           this.localUserError.firstName = false;
