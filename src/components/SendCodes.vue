@@ -30,7 +30,7 @@
           <h2 v-if="submissions" class="bold">Eddigi pályázataim ({{submissions.length}}):</h2>
           <h2 v-if="!submissions" class="bold">Eddigi pályázataim (0):</h2>
           <!-- TODO: Better table -->
-          <table class="submissiontable" width="100%">
+          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp submissiontable" width="100%">
             <tr>
               <th align="left" width="35%">Beküldés ideje</th>
               <th align="left" width="30%">AP kód:</th>
@@ -189,6 +189,11 @@ export default {
 }
 
 .submissiontable {
+  color: #ffffff;
+  background-color: transparent;
+}
+
+th {
   color: #ffffff;
 }
 

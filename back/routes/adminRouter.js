@@ -38,7 +38,6 @@ router.get('/check', async (req, res) => {
 router.get('/getsubmissions', async (req, res) => {
   try {
     let submissions = await Submission.find({});
-    console.log(submissions);
     res.status(200).send({ submissions: submissions });
   } catch(err) {
     res.status(200).send({ submissions: 'Hello bello' });

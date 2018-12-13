@@ -61,6 +61,7 @@
           <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
             <p>hali</p>
             <p>{{ submissions }}</p>
+            <line-chart :chartdata="chartdata" :options="chartOptions"/>
           </div>
           <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
             <svg fill="currentColor" viewBox="0 0 500 250" class="demo-graph">
@@ -176,13 +177,19 @@
 </template>
 
 <script>
+import LineChart from './LineChart';
+
 export default {
   name: 'dashboard',
+  components: {
+    LineChart
+  }, 
   data() {
     return {
       message: null,
       submissions: null,
-      isAdmin: false
+      isAdmin: false,
+      chartdata: [10, 20, 30]
     }
   },
   created() {
