@@ -61,7 +61,8 @@
           <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
             <p>hali</p>
             <p>{{ submissions }}</p>
-            <line-chart :chartdata="chartdata" :options="chartOptions"/>
+            <!-- <line-chart :chartdata="chartdata" :options="chartOptions"/> -->
+            <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>
           </div>
           <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
             <svg fill="currentColor" viewBox="0 0 500 250" class="demo-graph">
@@ -177,12 +178,12 @@
 </template>
 
 <script>
-import LineChart from './LineChart';
+// import LineChart from './LineChart';
 
 export default {
   name: 'dashboard',
   components: {
-    LineChart
+    // LineChart
   }, 
   data() {
     return {

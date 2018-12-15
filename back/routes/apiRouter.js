@@ -35,11 +35,11 @@ router.use(function(req, res, next) {
     }
   });
 
-router.get('/getsubmissions', async (req, res) => {
+router.get('/getusersubmissions', async (req, res) => {
   let userId = req.decoded.id;
   let subbmissions;
   try {
-    subbmissions = await Submission.find ({ userId: userId} );
+    subbmissions = await Submission.find ( {userId: userId} );
     return res.status(200).send({ message: subbmissions });
   } catch(err) {
     return res.status(200).send({ message: [], nocode: 'Még nincs kódbeküldésed.' });
@@ -66,6 +66,16 @@ router.post('/submission', async (req, res) => {
   submission.save(function (err) {
     if (err) throw err;
   });
+
+  return res.status(200).send({ message: 'Köszi a kódot'});
+});
+
+router.get('/getsubmissionsdatas', async (req, res) => {
+  let userId = new ObjectId(req.decoded.id);
+
+  let submissions = await Submission.find({});
+
+  console.log(submissions);
 
   return res.status(200).send({ message: 'Köszi a kódot'});
 });

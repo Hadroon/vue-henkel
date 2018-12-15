@@ -5,6 +5,8 @@ import Axios from 'axios';
 import VueMask from 'v-mask';
 import Datetime from 'vue-datetime';
 import 'vue-datetime/dist/vue-datetime.css';
+import VueChartkick from 'vue-chartkick';
+import Chart from 'chart.js';
 
 import MainView from './components/MainView.vue';
 import ValidateEmail from './components/ValidateEmail.vue';
@@ -15,6 +17,7 @@ Vue.prototype.$http = Axios;
 Vue.use(VueMask);
 Vue.use(Datetime);
 Vue.use(Router);
+Vue.use(VueChartkick, {adapter: Chart});
 
 const token = localStorage.getItem('henkeltoken');
 if (token) {
