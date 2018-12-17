@@ -74,6 +74,15 @@ function fillConverter(arr) {
   return result;
 }
 
+function generateDates(startingDay, howManyDays) {
+  let result = [];
+  result.push(formatDate(startingDay));
+  for (let i = 0; i <= howManyDays - 1; i++) {
+    result.push(formatDate(startingDay.setDate(startingDay.getDate() + 1)));
+  }
+  return result;
+}
+
 router.use(function(req, res, next) {
 
 // TODO: supercheck, security
@@ -123,8 +132,20 @@ router.get('/getsubmissions', async (req, res) => {
     let purchaseDatesObj = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
     let submissonDateObj = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
 
-    // let purchaseStamps = _.map(submissions, 'dateOfPurchase');
-    // let purchaseDates = purchaseStamps.map(formatDate).sort();
+    let purchaseStamps = _.map(submissions, 'dateOfPurchase');
+    let purchaseDates = purchaseStamps.map(formatDate).sort();
+
+    let maxTimestamp = Math.max(...purchaseStamps);
+    let minTimestamp = Math.min(...purchaseStamps);
+
+    let timeDiff = maxTimestamp - minTimestamp;
+    let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    console.log(generateDates(new Date(minTimestamp), diffDays));
+
+
+
+
     // let counted = counter(purchaseDates);
     // let final = fillConverter(counted);
 
@@ -140,7 +161,10 @@ router.get('/getsubmissions', async (req, res) => {
 
 
     
-    console.log(datas);
+    console.log(purchaseStamps);
+    console.log(new Date(minTimestamp));
+    console.log(new Date(maxTimestamp));
+    console.log(diffDays);
     // console.log(submissionDatesArr);
     res.status(200).send({ datas: datas });
   } catch(err) {
