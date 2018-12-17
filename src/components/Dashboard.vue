@@ -61,7 +61,7 @@
           <div class="mdl-cell mdl-cell--12-col">
         <div v-if="!loading">
           <p>Napi beküldések eloszlása:</p>
-          <line-chart :data="testi" :options="{ responsive: true, width: '100%' }"></line-chart>
+          <line-chart :data="datas" :options="{ responsive: true, spanGaps: false }"></line-chart>
         </div>
 
 

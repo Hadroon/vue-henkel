@@ -28,6 +28,52 @@ function objToArray(obj) {
   return result;
 }
 
+function counter(arr) {
+  var a = [], b = [], prev;
+
+  // arr.sort();
+  let i = 0;
+  for ( i; i < arr.length; i++ ) {
+      if ( arr[i] !== prev ) {
+          a.push(arr[i]);
+          b.push(1);
+      } else {
+          b[b.length-1]++;
+      }
+      prev = arr[i];
+  }
+
+  return [a, b];
+}
+
+function fillConverter(arr) {
+  let result = [];
+  let dates = arr[0];
+  let counts = arr[1];
+  let i = 0;
+  let date;
+  let nextDate;
+  let tomorrow;
+  for ( i; i < arr.length;) {
+    date = new Date(dates[i]);
+    nextDate = dates[i + 1];
+    tomorrow = date;
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (tomorrow !== nextDate) {
+      dates.splice(i+1, 0, tomorrow);
+      counts.splice(i+1, 0, 0);
+      console.log(i);
+    } else {
+      i++;
+      console.log(i);
+    }
+  }
+
+  result.push(dates);
+  result.push(counts);
+  return result;
+}
+
 router.use(function(req, res, next) {
 
 // TODO: supercheck, security
@@ -56,6 +102,7 @@ router.get('/check', async (req, res) => {
 });
 
 router.get('/getsubmissions', async (req, res) => {
+  console.log('hello');
   try {
     let datas = [];
     let submissions = await Submission.find({});
@@ -73,23 +120,31 @@ router.get('/getsubmissions', async (req, res) => {
 
     // let orderedSub = _.orderBy(submissions, ['dateOfSubmission'], ['asc'])
     
-    // let purchaseDatesObj = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
-    // let submissonDateObj = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
+    let purchaseDatesObj = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
+    let submissonDateObj = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
 
-    let purchaseStamps = _.map(submissions, 'dateOfPurchase');
-    let purchaseDates = purchaseStamps.map(formatDate).sort();
+    // let purchaseStamps = _.map(submissions, 'dateOfPurchase');
+    // let purchaseDates = purchaseStamps.map(formatDate).sort();
+    // let counted = counter(purchaseDates);
+    // let final = fillConverter(counted);
+
 
     // let purchaseDatesArr = _.orderBy(purchaseDatesObj, );
     // let submissionDatesArr = objToArray(submissonDateObj);
 
-    // datas.push(purchaseDatesArr);
-    // datas.push(submissionData);
+    purchaseData.data = purchaseDatesObj;
+    submissionData.data = submissonDateObj;
+
+    datas.push(purchaseData);
+    datas.push(submissionData);
 
 
-    console.log(purchaseDates);
+    
+    console.log(datas);
     // console.log(submissionDatesArr);
     res.status(200).send({ datas: datas });
   } catch(err) {
+    console.log(err);
     res.status(200).send({ submissions: 'Hello bello' });
   }
 });
