@@ -59,10 +59,11 @@
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content">
           <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-            <p>hali</p>
-            <p>{{ submissions }}</p>
-            <!-- <line-chart :chartdata="chartdata" :options="chartOptions"/> -->
-            <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>
+            <div v-if="!loading">
+            <p>Napi beküldések eloszlása:</p>
+            <line-chart :data="datas.dateOfPurchaseChartData"></line-chart>
+            <line-chart :data="datas.dateOfSubmissionChartData"></line-chart>
+            </div>
           </div>
           <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
             <svg fill="currentColor" viewBox="0 0 500 250" class="demo-graph">
@@ -190,7 +191,8 @@ export default {
       message: null,
       submissions: null,
       isAdmin: false,
-      chartdata: [10, 20, 30]
+      datas: Object,
+      loading: true
     }
   },
   created() {
@@ -201,12 +203,15 @@ export default {
     loadSubmissions: async function() {
       try {
         let response = await this.$http.get("/admin/getsubmissions");
+        console.log(response);
+        console.log(response.data.datas.dateOfPurchaseChartData);
         if (response.data.error) {
           this.message = response.data.error;
           return;
         }
-        if (response.data.submissions) {
-          this.submissions = response.data.submissions;
+        if (response.data.datas) {
+          this.datas = response.data.datas;
+          this.loading = false;
           return; 
         }
       } catch (e) {

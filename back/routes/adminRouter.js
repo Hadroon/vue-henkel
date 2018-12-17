@@ -50,12 +50,17 @@ router.get('/check', async (req, res) => {
 
 router.get('/getsubmissions', async (req, res) => {
   try {
+    let datas = {};
     let submissions = await Submission.find({});
 
-    let dateOfPurchaseArray = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
+    let dateOfPurchaseChartData = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
+    let dateOfSubmissionChartData = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
 
-    console.log(dateOfPurchaseArray);
-    res.status(200).send({ submissions: submissions });
+    datas.dateOfPurchaseChartData = dateOfPurchaseChartData;
+    datas.dateOfSubmissionChartData = dateOfSubmissionChartData;
+
+    console.log(datas);
+    res.status(200).send({ datas: datas });
   } catch(err) {
     res.status(200).send({ submissions: 'Hello bello' });
   }
