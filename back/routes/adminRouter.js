@@ -21,6 +21,13 @@ function formatDate(date) {
   return [year, month, day].join('-');
 }
 
+function objToArray(obj) {
+  var result = Object.keys(obj).map(function(key) {
+    return [key, obj[key]];
+  });
+  return result;
+}
+
 router.use(function(req, res, next) {
 
 // TODO: supercheck, security
@@ -50,16 +57,37 @@ router.get('/check', async (req, res) => {
 
 router.get('/getsubmissions', async (req, res) => {
   try {
-    let datas = {};
+    let datas = [];
     let submissions = await Submission.find({});
+    // console.log('original subb: ');
+    // console.log(submissions);
 
-    let dateOfPurchaseChartData = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
-    let dateOfSubmissionChartData = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
+    
+    let purchaseData = {
+      name: 'Vásárlások időpontja.'
+    }
+    
+    let submissionData = {
+      name: 'Beküldések időpontja.'
+    }
 
-    datas.dateOfPurchaseChartData = dateOfPurchaseChartData;
-    datas.dateOfSubmissionChartData = dateOfSubmissionChartData;
+    // let orderedSub = _.orderBy(submissions, ['dateOfSubmission'], ['asc'])
+    
+    // let purchaseDatesObj = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
+    // let submissonDateObj = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
 
-    console.log(datas);
+    let purchaseStamps = _.map(submissions, 'dateOfPurchase');
+    let purchaseDates = purchaseStamps.map(formatDate).sort();
+
+    // let purchaseDatesArr = _.orderBy(purchaseDatesObj, );
+    // let submissionDatesArr = objToArray(submissonDateObj);
+
+    // datas.push(purchaseDatesArr);
+    // datas.push(submissionData);
+
+
+    console.log(purchaseDates);
+    // console.log(submissionDatesArr);
     res.status(200).send({ datas: datas });
   } catch(err) {
     res.status(200).send({ submissions: 'Hello bello' });
