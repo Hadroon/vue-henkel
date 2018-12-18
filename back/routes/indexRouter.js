@@ -123,7 +123,7 @@ router.post("/reg", function (req, res) {
             service: 'gmail',
             auth: {
               user: 'gabor.muranyi@gmail.com',
-              pass: 'jelszo0500'
+              pass: config.gmailPass
             }
           });
 
@@ -131,7 +131,7 @@ router.post("/reg", function (req, res) {
             from: 'noreply@wangaru-interactive.com',
             to: newUserObject.email,
             subject: 'Aktíváló email',
-            html: '<a href="' + hostName + '/verif/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
+            html: '<a href="https://node-chris.herokuapp.com/verif/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
           };
 
           transporter.sendMail(mailOptions, function (error, info) {
@@ -245,7 +245,7 @@ router.post('/reset', async (req, res) => {
         service: 'gmail',
         auth: {
           user: 'gabor.muranyi@gmail.com',
-          pass: 'jelszo0500'
+          pass: config.gmailPass
         }
       });
 
@@ -253,7 +253,7 @@ router.post('/reset', async (req, res) => {
         from: 'noreply@wangaru-interactive.com',
         to: user.email,
         subject: 'Jelszó megváltoztatása',
-        html: '<a href="' + hostName + '/reset/' + user.passwordToken + '" class="btn btn-default">Jelszócseréhez kérlek kattints ide.</a>'
+        html: '<a href="https://node-chris.herokuapp.com/reset/' + user.passwordToken + '" class="btn btn-default">Jelszócseréhez kérlek kattints ide.</a>'
       };
 
       transporter.sendMail(mailOptions, function (error, info) {
