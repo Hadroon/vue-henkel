@@ -16,7 +16,6 @@
             <div class="form-group">
               <legend>Vásárlás dátuma:</legend>
               <datetime v-model="timeOfPurchase" type="datetime" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
-              <!-- <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy"> -->
             </div>
             <button
               :disabled="checkSubmissionData"

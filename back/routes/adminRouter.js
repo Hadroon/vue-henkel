@@ -165,7 +165,7 @@ router.get('/getsubmissions', async (req, res) => {
     let submissionStamps = _.map(submissions, 'dateOfSubmission');
 
     let maxTSSub = Math.max(...submissionStamps);
-    let minTSSub = Math.min(...purchaseStamps);
+    let minTSSub = Math.min(...submissionStamps);
 
     timeDiff = maxTSSub - minTSSub;
     diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));

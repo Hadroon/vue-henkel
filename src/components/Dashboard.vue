@@ -186,7 +186,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .mychart {
   width: 500px;
