@@ -141,10 +141,11 @@ router.get('/getsubmissions', async (req, res) => {
     let timeDiff = maxTimestamp - minTimestamp;
     let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-    console.log(generateDates(new Date(minTimestamp), diffDays));
+    let generatedDays = generateDates(new Date(minTimestamp), diffDays);
 
+    let countedDays
 
-
+    console.log(_.map(purchaseDatesObj));
 
     // let counted = counter(purchaseDates);
     // let final = fillConverter(counted);
@@ -160,11 +161,11 @@ router.get('/getsubmissions', async (req, res) => {
     datas.push(submissionData);
 
 
-    
-    console.log(purchaseStamps);
-    console.log(new Date(minTimestamp));
-    console.log(new Date(maxTimestamp));
-    console.log(diffDays);
+    console.log(purchaseDates);
+    // console.log(purchaseData);
+    // console.log(new Date(minTimestamp));
+    // console.log(new Date(maxTimestamp));
+    // console.log(diffDays);
     // console.log(submissionDatesArr);
     res.status(200).send({ datas: datas });
   } catch(err) {
