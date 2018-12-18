@@ -8,6 +8,7 @@ var bcrypt = require("bcrypt-nodejs");
 const config = require("../config");
 
 var User = require("../models/users");
+var hostName = require('os').hostname();
 
 router.post("/reg", function (req, res) {
   const reqUser = req.body.user;
@@ -130,7 +131,7 @@ router.post("/reg", function (req, res) {
             from: 'noreply@wangaru-interactive.com',
             to: newUserObject.email,
             subject: 'Aktíváló email',
-            html: '<a href="http://localhost:8080/verif/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
+            html: '<a href="' + hostName + '/verif/' + newUserObject.emailVerificationToken + '" class="btn btn-default">Akíváláshoz kérlek kattints ide.</a>'
           };
 
           transporter.sendMail(mailOptions, function (error, info) {
@@ -252,7 +253,7 @@ router.post('/reset', async (req, res) => {
         from: 'noreply@wangaru-interactive.com',
         to: user.email,
         subject: 'Jelszó megváltoztatása',
-        html: '<a href="http://localhost:8080/reset/' + user.passwordToken + '" class="btn btn-default">Jelszócseréhez kérlek kattints ide.</a>'
+        html: '<a href="' + hostName + '/reset/' + user.passwordToken + '" class="btn btn-default">Jelszócseréhez kérlek kattints ide.</a>'
       };
 
       transporter.sendMail(mailOptions, function (error, info) {

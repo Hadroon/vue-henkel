@@ -178,8 +178,17 @@ router.get('/getsubmissions', async (req, res) => {
     purchaseData.data = countedDaysPurchase;
     submissionData.data = countedDaysSubmissions;
 
-    datas.push(purchaseData);
-    datas.push(submissionData);
+    datas.push([purchaseData, submissionData])
+
+    // datas.push(purchaseData);
+    // datas.push(submissionData);
+
+    // all sublission, number
+    // distinct players, number
+    // one player played how many times? , pie, float
+    // maybe weekdays, barchart
+    // purchase hours
+    // submission hours
 
     res.status(200).send({ datas: datas });
   } catch(err) {
