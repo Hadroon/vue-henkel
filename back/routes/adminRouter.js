@@ -77,8 +77,21 @@ function fillConverter(arr) {
 function generateDates(startingDay, howManyDays) {
   let result = [];
   result.push(formatDate(startingDay));
-  for (let i = 0; i <= howManyDays - 1; i++) {
+  for (let i = 0; i < howManyDays - 1; i++) {
     result.push(formatDate(startingDay.setDate(startingDay.getDate() + 1)));
+  }
+  return result;
+}
+
+function matchDates(dates, counts) {
+  let result = [];
+  let i = 0;
+  for (i; i < dates.length; i++) {
+    if(counts[dates[i]]) {
+      result.push([dates[i], counts[dates[i]]]);
+    } else {
+      result.push([dates[i], 0]);
+    }
   }
   return result;
 }
@@ -111,7 +124,6 @@ router.get('/check', async (req, res) => {
 });
 
 router.get('/getsubmissions', async (req, res) => {
-  console.log('hello');
   try {
     let datas = [];
     let submissions = await Submission.find({});
@@ -127,46 +139,48 @@ router.get('/getsubmissions', async (req, res) => {
       name: 'Beküldések időpontja.'
     }
 
-    // let orderedSub = _.orderBy(submissions, ['dateOfSubmission'], ['asc'])
-    
     let purchaseDatesObj = _.countBy(_.map(submissions, 'dateOfPurchase'), formatDate);
     let submissonDateObj = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
-
+    
+    /*
+     * Purchase counts
+     * TODO: refactor
+    */
     let purchaseStamps = _.map(submissions, 'dateOfPurchase');
-    let purchaseDates = purchaseStamps.map(formatDate).sort();
+    let maxTimestampPurchase = Math.max(...purchaseStamps);
+    let minTimestampPurchase = Math.min(...purchaseStamps);
 
-    let maxTimestamp = Math.max(...purchaseStamps);
-    let minTimestamp = Math.min(...purchaseStamps);
-
-    let timeDiff = maxTimestamp - minTimestamp;
+    let timeDiff = maxTimestampPurchase - minTimestampPurchase;
     let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-    let generatedDays = generateDates(new Date(minTimestamp), diffDays);
+    let generatedDays = generateDates(new Date(minTimestampPurchase), diffDays);
 
-    let countedDays
-
-    console.log(_.map(purchaseDatesObj));
-
-    // let counted = counter(purchaseDates);
-    // let final = fillConverter(counted);
+    let countedDaysPurchase = matchDates(generatedDays, purchaseDatesObj);
 
 
-    // let purchaseDatesArr = _.orderBy(purchaseDatesObj, );
-    // let submissionDatesArr = objToArray(submissonDateObj);
+    /*
+     * Purchase counts
+     * TODO: refactor
+    */
+    let submissionStamps = _.map(submissions, 'dateOfSubmission');
 
-    purchaseData.data = purchaseDatesObj;
-    submissionData.data = submissonDateObj;
+    let maxTSSub = Math.max(...submissionStamps);
+    let minTSSub = Math.min(...purchaseStamps);
+
+    timeDiff = maxTSSub - minTSSub;
+    diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    generatedDays = generateDates(new Date(minTSSub), diffDays);
+
+    let countedDaysSubmissions = matchDates(generatedDays, submissonDateObj);
+
+
+    purchaseData.data = countedDaysPurchase;
+    submissionData.data = countedDaysSubmissions;
 
     datas.push(purchaseData);
     datas.push(submissionData);
 
-
-    console.log(purchaseDates);
-    // console.log(purchaseData);
-    // console.log(new Date(minTimestamp));
-    // console.log(new Date(maxTimestamp));
-    // console.log(diffDays);
-    // console.log(submissionDatesArr);
     res.status(200).send({ datas: datas });
   } catch(err) {
     console.log(err);

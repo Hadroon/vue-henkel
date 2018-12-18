@@ -18,7 +18,6 @@
               <datetime v-model="timeOfPurchase" type="datetime" format="yyyy-MM-dd HH:mm" class="theme-red" auto="true"></datetime>
               <!-- <input type="text" class="form-control" name="dateofbuy" v-model="dateOfBuy"> -->
             </div>
-            <p>{{checkSubmissionData}}</p>
             <button
               :disabled="checkSubmissionData"
               style="item-align: center;"
@@ -100,6 +99,8 @@ export default {
             dateOfSubmission: newDate,
             apCode: this.apCode,
           });
+          this.apCode = null;
+          this.timeOfPurchase = null;
           this.spinner.loading = false;
           return;
         } else if (response.data.error) {

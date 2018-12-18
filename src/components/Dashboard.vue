@@ -141,10 +141,7 @@ export default {
       //   {name: "valami", data:  [['2018-12-11', 5],[ '2018-12-15', 1], ['2018-12-17', 2]] },
       //   {name: "valami2", data:  [['2018-12-11', 5],[ '2018-12-15', 4], ['2018-12-17', 2]] }
       // ]
-      testi: [ 
-        {name: "valami", data:  {'2018-12-11': 5, '2018-12-15': 1, '2018-12-17': 2, '2018-12-12': 0 } },
-        {name: "valamiprobaketto", data:  {'2018-12-11': 6, '2018-12-15': 4, '2018-12-17': 2 } } 
-      ]
+      testi: null
     }
   },
   created() {
@@ -156,7 +153,7 @@ export default {
       try {
         let response = await this.$http.get("/admin/getsubmissions");
         console.log(response);
-        console.log(response.data.datas.dateOfPurchaseChartData);
+        // console.log(response.data.datas.dateOfPurchaseChartData);
         if (response.data.error) {
           this.message = response.data.error;
           return;
