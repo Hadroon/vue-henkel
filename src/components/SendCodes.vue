@@ -89,7 +89,9 @@ export default {
         let response = await this.$http.post('/api/submission', {
           timestampDateOfPurchase: timestampDateOfPurchase,
           apCode: this.apCode
-        });
+        },
+        {headers: {henkeltoken: localStorage.getItem('henkeltoken')}}
+        );
         if(response.data.message) {
           this.messageCode = response.data.message;
           let newDate = Number(new Date().getTime());

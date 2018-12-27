@@ -60,8 +60,6 @@
         <div class="mdl-grid">
           <div class="mdl-cell mdl-cell--12-col">
             <div v-if="!loading">
-              <p>Napi beküldések eloszlása:</p>
-              <line-chart :data="datas[0]" :options="{ responsive: true, spanGaps: false }"></line-chart>
               <div class="cards-wrapper">
                 <div class="my-card bg-green">
                   <i class="material-icons">people</i>
@@ -70,8 +68,20 @@
                 </div>
                 <div class="my-card bg-green-blue">
                   <i class="material-icons">assignment_turned_in</i>
-                  <p>valami 2</p>
+                  <p>Pályázatok száma:</p>
+                  <h1>{{datas[2]}}</h1>
                 </div>
+              </div>
+              <div style="clear: both;"></div>
+              <hr>
+              <div style="margin-top: 20px;">
+                <p>Napi beküldések eloszlása:</p>
+                <line-chart :data="datas[0]" :options="{ responsive: true, spanGaps: false }"></line-chart>
+              </div>
+              <hr>
+              <div style="margin-top: 20px;">
+                <p>Beküldések száma hányszor (kell jobb megnevezés): </p>
+                <column-chart :data="datas[3]"></column-chart>
               </div>
             </div>
           </div>

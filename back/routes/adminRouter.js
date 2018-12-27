@@ -31,7 +31,6 @@ function objToArray(obj) {
 function counter(arr) {
   var a = [], b = [], prev;
 
-  // arr.sort();
   let i = 0;
   for ( i; i < arr.length; i++ ) {
       if ( arr[i] !== prev ) {
@@ -77,7 +76,7 @@ function fillConverter(arr) {
 function generateDates(startingDay, howManyDays) {
   let result = [];
   result.push(formatDate(startingDay));
-  for (let i = 0; i < howManyDays - 1; i++) {
+  for (let i = 0; i < howManyDays; i++) {
     result.push(formatDate(startingDay.setDate(startingDay.getDate() + 1)));
   }
   return result;
@@ -143,7 +142,6 @@ router.get('/getsubmissions', async (req, res) => {
     let submissonDateObj = _.countBy(_.map(submissions, 'dateOfSubmission'), formatDate);
     
     /*
-     * Purchase counts
      * TODO: refactor
     */
     let purchaseStamps = _.map(submissions, 'dateOfPurchase');
@@ -151,7 +149,7 @@ router.get('/getsubmissions', async (req, res) => {
     let minTimestampPurchase = Math.min(...purchaseStamps);
 
     let timeDiff = maxTimestampPurchase - minTimestampPurchase;
-    let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+    let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     let generatedDays = generateDates(new Date(minTimestampPurchase), diffDays);
 
@@ -159,7 +157,6 @@ router.get('/getsubmissions', async (req, res) => {
 
 
     /*
-     * Purchase counts
      * TODO: refactor
     */
     let submissionStamps = _.map(submissions, 'dateOfSubmission');
@@ -168,7 +165,7 @@ router.get('/getsubmissions', async (req, res) => {
     let minTSSub = Math.min(...submissionStamps);
 
     timeDiff = maxTSSub - minTSSub;
-    diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+    diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     generatedDays = generateDates(new Date(minTSSub), diffDays);
 
@@ -182,19 +179,32 @@ router.get('/getsubmissions', async (req, res) => {
 
     // Unique users
 
-    let uniqueUserCount = _.uniqBy(submissions, 'email').length;
+    let uniqueUserByEmail = _.uniqBy(submissions, 'email');
+    let uniqueUserCount = uniqueUserByEmail.length;
     
     datas.push(uniqueUserCount);
 
-    // datas.push(purchaseData);
-    // datas.push(submissionData);
+    // Submission count
 
-    // all sublission, number
-    // distinct players, number
+    datas.push(submissions.length);
+
+    // One player how many times played
+
+    let playerPlayedObj = _.countBy(_.map(_.countBy(_.map(submissions, 'email'))));
+    let playerPlayedArray = _.map(playerPlayedObj, (value, prop) => ([ prop, value ]));
+    playerPlayedArray.sort((a, b) => {
+      return a[0] - b[0];
+    });
+
+    datas.push(playerPlayedArray);
+
+    // remaining days of promotion
+    // promotion intervallum
     // one player played how many times? , pie, float
     // maybe weekdays, barchart
     // purchase hours
     // submission hours
+    // winners and winners data
 
     res.status(200).send({ datas: datas });
   } catch(err) {
