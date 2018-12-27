@@ -151,7 +151,7 @@ router.get('/getsubmissions', async (req, res) => {
     let minTimestampPurchase = Math.min(...purchaseStamps);
 
     let timeDiff = maxTimestampPurchase - minTimestampPurchase;
-    let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
 
     let generatedDays = generateDates(new Date(minTimestampPurchase), diffDays);
 
@@ -168,7 +168,7 @@ router.get('/getsubmissions', async (req, res) => {
     let minTSSub = Math.min(...submissionStamps);
 
     timeDiff = maxTSSub - minTSSub;
-    diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
 
     generatedDays = generateDates(new Date(minTSSub), diffDays);
 
@@ -178,7 +178,13 @@ router.get('/getsubmissions', async (req, res) => {
     purchaseData.data = countedDaysPurchase;
     submissionData.data = countedDaysSubmissions;
 
-    datas.push([purchaseData, submissionData])
+    datas.push([purchaseData, submissionData]);
+
+    // Unique users
+
+    let uniqueUserCount = _.uniqBy(submissions, 'email').length;
+    
+    datas.push(uniqueUserCount);
 
     // datas.push(purchaseData);
     // datas.push(submissionData);

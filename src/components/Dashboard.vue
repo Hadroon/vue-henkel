@@ -59,10 +59,13 @@
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content">
           <div class="mdl-cell mdl-cell--12-col">
-        <div v-if="!loading">
-          <p>Napi beküldések eloszlása:</p>
-          <line-chart :data="datas[0]" :options="{ responsive: true, spanGaps: false }"></line-chart>
-        </div>
+            <div v-if="!loading">
+              <p>Napi beküldések eloszlása:</p>
+              <line-chart :data="datas[0]" :options="{ responsive: true, spanGaps: false }"></line-chart>
+            </div>
+            <div>
+              <p>Egyedi játékosok száma: {{datas[1]}}</p>
+            </div>
 
 
 

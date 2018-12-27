@@ -161,6 +161,7 @@ export default {
       this.authenticated.auth = false;
       this.authenticated.name = null;
       this.authenticated.isAdmin = false;
+      this.customComponentRight = 'log-in-form';
       return;
     }
   },
