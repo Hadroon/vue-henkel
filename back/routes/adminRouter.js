@@ -178,7 +178,7 @@ router.get('/getsubmissions', async (req, res) => {
     purchaseData.data = countedDaysPurchase;
     submissionData.data = countedDaysSubmissions;
 
-    datas.push([purchaseData, submissionData]);
+    datas.push([submissionData, purchaseData]);
 
     // Unique users
 
