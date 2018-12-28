@@ -364,7 +364,7 @@ a:target:before {
 }
 
 #logic {
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
 
 .icon {

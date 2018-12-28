@@ -191,8 +191,7 @@ export default {
         this.isAdmin = response.data.isAdmin;
         return;
       } catch (e) {
-        console.error(e);
-        throw e;
+        this.$router.push({name: 'home'});
       }
     },
     formatDate: function (date) {
