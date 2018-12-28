@@ -86,16 +86,16 @@
               <hr>
               <div style="margin-top: 20px;">
                 <table>
-                  <!-- <thead>
+                  <thead>
                     <tr>
                       <th @click="sort('dateOfSubmission')">Beküldés dátuma</th>
                       <th @click="sort('email')">Email cím</th>
                       <th @click="sort('dateOfPurchase')">Vásárlás dátuma</th>
                       <th @click="sort('apCode')">AP kód</th>
                     </tr>
-                  </thead> -->
+                  </thead>
                   <tbody>
-                    <tr v-for="submission in datas[4]" :key="submission._id">
+                    <tr v-for="submission in sortedSubmissions" :key="submission._id">
                       <td>{{formatDate(submission.dateOfSubmission)}}</td>
                       <td>{{submission.email}}</td>
                       <td>{{formatDate(submission.dateOfPurchase)}}</td>
@@ -103,12 +103,12 @@
                     </tr>
                   </tbody>
                 </table>
-                <!-- <p>
+                <p>
                 <button @click="prevPage">Elöző</button> 
                 <button @click="nextPage">Következő</button>
                 </p>
                 
-                debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}} -->
+                debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}
               </div>
             </div>
           </div>
@@ -134,11 +134,10 @@ export default {
       isAdmin: false,
       datas: Array,
       loading: true,
-      // testi: [ 
-      //   {name: "valami", data:  [['2018-12-11', 5],[ '2018-12-15', 1], ['2018-12-17', 2]] },
-      //   {name: "valami2", data:  [['2018-12-11', 5],[ '2018-12-15', 4], ['2018-12-17', 2]] }
-      // ]
-      testi: null
+      currentSort:'dateOfSubmission',
+      currentSortDir:'asc',
+      pageSize:30,
+      currentPage:1
     }
   },
   created() {
@@ -157,6 +156,7 @@ export default {
         }
         if (response.data.datas) {
           this.datas = response.data.datas;
+          this.submissions = response.data.datas[4];
           this.loading = false;
           return; 
         }
@@ -191,17 +191,51 @@ export default {
       let formatedDate = [year, month, day].join('-');
 
       let hour = d.getHours();
-      // if (month.length < 2) month = '0' + month;
+      if (hour.length < 2) hour = '0' + month;
 
       let minutes = d.getMinutes();
-      // if (month.length < 2) month = '0' + month;
+      if (minutes.length < 2) minutes = '0' + month;
       return formatedDate + ' ' + hour + ':' + minutes;
     },
-  }  
+    sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+      this.currentSort = s;
+    },
+    nextPage:function() {
+      if((this.currentPage*this.pageSize) < this.datas[4].length) this.currentPage++;
+    },
+    prevPage:function() {
+      if(this.currentPage > 1) this.currentPage--;
+    }
+  },
+  computed:{
+    sortedSubmissions:function() {
+      return this.submissions.sort((a,b) => {
+        console.log(a);
+        let modifier = 1;
+        if(this.currentSortDir === 'desc') modifier = -1;
+        if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+        if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+        return 0;
+      }).filter((row, index) => {
+        let start = (this.currentPage-1)*this.pageSize;
+        let end = this.currentPage*this.pageSize;
+        if(index >= start && index < end) return true;
+      });
+    }
+  }
 }
 </script>
 
 <style scoped>
+
+th {
+  cursor:pointer;
+  color: #000000;
+}
 
 .mychart {
   width: 500px;
