@@ -75,13 +75,13 @@
               <div style="clear: both;"></div>
               <hr>
               <div style="margin-top: 20px;">
-                <p>Napi beküldések eloszlása:</p>
-                <line-chart :data="datas[0]" :options="{ responsive: true, spanGaps: false }"></line-chart>
+                <h3>Napi beküldések eloszlása:</h3>
+                <line-chart :data="datas[0]" :options="{ responsive: true, spanGaps: false }" :colors="['#e91e63', '#4caf50']"></line-chart>
               </div>
               <hr>
               <div style="margin-top: 20px;">
                 <p>Beküldések száma hányszor (kell jobb megnevezés): </p>
-                <column-chart :data="datas[3]"></column-chart>
+                <column-chart :data="datas[3]" xtitle="Beküldések száma" ytitle="Hányan játszottak ennyiszer"></column-chart>
               </div>
               <hr>
               <div style="margin-top: 20px;">
@@ -260,6 +260,10 @@ export default {
 </script>
 
 <style scoped>
+
+h3 {
+  color: #444444;
+}
 
 th i {
   color: #000000;
