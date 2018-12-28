@@ -107,9 +107,9 @@
                   </thead>
                   <tbody>
                     <tr v-for="submission in sortedSubmissions" :key="submission._id">
-                      <td>{{formatDate(submission.dateOfSubmission)}}</td>
+                      <td>{{submission.dateOfSubmission}}</td>
                       <td>{{submission.email}}</td>
-                      <td>{{formatDate(submission.dateOfPurchase)}}</td>
+                      <td>{{submission.dateOfPurchase}}</td>
                       <td>{{submission.apCode}}</td>
                     </tr>
                   </tbody>
@@ -167,8 +167,12 @@ export default {
         }
         if (response.data.datas) {
           this.datas = response.data.datas;
-          this.submissions = response.data.datas[4];
-          
+          let localSubmissions = response.data.datas[4];
+          for (let submission of localSubmissions) {
+            submission.dateOfSubmission = this.formatDate(submission.dateOfSubmission);
+            submission.dateOfPurchase = this.formatDate(submission.dateOfPurchase);
+          }
+          this.submissions = localSubmissions;
           this.loading = false;
           return; 
         }
