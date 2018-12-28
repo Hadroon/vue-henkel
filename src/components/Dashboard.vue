@@ -83,6 +83,33 @@
                 <p>Beküldések száma hányszor (kell jobb megnevezés): </p>
                 <column-chart :data="datas[3]"></column-chart>
               </div>
+              <hr>
+              <div style="margin-top: 20px;">
+                <table>
+                  <!-- <thead>
+                    <tr>
+                      <th @click="sort('dateOfSubmission')">Beküldés dátuma</th>
+                      <th @click="sort('email')">Email cím</th>
+                      <th @click="sort('dateOfPurchase')">Vásárlás dátuma</th>
+                      <th @click="sort('apCode')">AP kód</th>
+                    </tr>
+                  </thead> -->
+                  <tbody>
+                    <tr v-for="submission in datas[4]" :key="submission._id">
+                      <td>{{formatDate(submission.dateOfSubmission)}}</td>
+                      <td>{{submission.email}}</td>
+                      <td>{{formatDate(submission.dateOfPurchase)}}</td>
+                      <td>{{submission.apCode}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- <p>
+                <button @click="prevPage">Elöző</button> 
+                <button @click="nextPage">Következő</button>
+                </p>
+                
+                debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}} -->
+              </div>
             </div>
           </div>
         </div>
@@ -151,6 +178,24 @@ export default {
         console.error(e);
         throw e;
       }
+    },
+    formatDate: function (date) {
+      let d = new Date(date);
+      let month = '' + (d.getMonth() + 1);
+      let day = '' + d.getDate();
+      let year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      let formatedDate = [year, month, day].join('-');
+
+      let hour = d.getHours();
+      // if (month.length < 2) month = '0' + month;
+
+      let minutes = d.getMinutes();
+      // if (month.length < 2) month = '0' + month;
+      return formatedDate + ' ' + hour + ':' + minutes;
     },
   }  
 }
