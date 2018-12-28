@@ -85,13 +85,21 @@
               </div>
               <hr>
               <div style="margin-top: 20px;">
-                <table>
+                <table class="mdl-data-table">
                   <thead>
                     <tr>
-                      <th @click="sort('dateOfSubmission')">Beküldés dátuma</th>
-                      <th @click="sort('email')">Email cím</th>
-                      <th @click="sort('dateOfPurchase')">Vásárlás dátuma</th>
-                      <th @click="sort('apCode')">AP kód</th>
+                      <th @click="sort('dateOfSubmission')">Beküldés dátuma 
+                        <i class="material-icons" :class="{ active: currentSort == 'dateOfSubmission'}">{{currentSortDir == 'asc' ? 'arrow_drop_up' : 'arrow_drop_down'}}</i>
+                      </th>
+                      <th @click="sort('email')">Email cím 
+                        <i class="material-icons" :class="{ active: currentSort == 'email'}">{{currentSortDir == 'asc' ? 'arrow_drop_up' : 'arrow_drop_down'}}</i>
+                      </th>
+                      <th @click="sort('dateOfPurchase')">Vásárlás dátuma 
+                        <i class="material-icons" :class="{ active: currentSort == 'dateOfPurchase'}">{{currentSortDir == 'asc' ? 'arrow_drop_up' : 'arrow_drop_down'}}</i>
+                      </th>
+                      <th @click="sort('apCode')">AP kód 
+                        <i class="material-icons" :class="{ active: currentSort == 'apCode'}">{{currentSortDir == 'asc' ? 'arrow_drop_up' : 'arrow_drop_down'}}</i>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -105,10 +113,9 @@
                 </table>
                 <p>
                 <button @click="prevPage">Elöző</button> 
+                <span> {{this.currentPage}} </span>
                 <button @click="nextPage">Következő</button>
                 </p>
-                
-                debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}
               </div>
             </div>
           </div>
@@ -136,8 +143,8 @@ export default {
       loading: true,
       currentSort:'dateOfSubmission',
       currentSortDir:'asc',
-      pageSize:30,
-      currentPage:1
+      pageSize:10,
+      currentPage:1,
     }
   },
   created() {
@@ -214,7 +221,6 @@ export default {
   computed:{
     sortedSubmissions:function() {
       return this.submissions.sort((a,b) => {
-        console.log(a);
         let modifier = 1;
         if(this.currentSortDir === 'desc') modifier = -1;
         if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
@@ -231,6 +237,38 @@ export default {
 </script>
 
 <style scoped>
+
+th i {
+  color: #000000;
+  position: relative;
+  top: 9px;
+  opacity: 0;
+}
+
+th i.active {
+  opacity: 1;
+}
+
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0.66;
+}
+
+.arrow.asc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #fff;
+}
+
+.arrow.desc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}
 
 th {
   cursor:pointer;
