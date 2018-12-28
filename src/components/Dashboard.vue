@@ -85,6 +85,9 @@
               </div>
               <hr>
               <div style="margin-top: 20px;">
+                  <form id="search">
+                    Keresés <input name="query" v-model="filterKey">
+                  </form>
                 <table class="mdl-data-table">
                   <thead>
                     <tr>
@@ -145,6 +148,7 @@ export default {
       currentSortDir:'asc',
       pageSize:10,
       currentPage:1,
+      filterKey: undefined,
     }
   },
   created() {
@@ -164,6 +168,7 @@ export default {
         if (response.data.datas) {
           this.datas = response.data.datas;
           this.submissions = response.data.datas[4];
+          
           this.loading = false;
           return; 
         }
@@ -220,7 +225,21 @@ export default {
   },
   computed:{
     sortedSubmissions:function() {
-      return this.submissions.sort((a,b) => {
+
+      console.log('lefutok');
+
+      let data = this.submissions;
+      let filterKey = this.filterKey && this.filterKey.toLowerCase()
+
+      if (filterKey) {
+        data = this.submissions.filter(function (row) {
+          return Object.keys(row).some(function (key) {
+            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
+          })
+        })
+      }
+
+      return data.sort((a,b) => {
         let modifier = 1;
         if(this.currentSortDir === 'desc') modifier = -1;
         if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
