@@ -198,6 +198,7 @@ router.get('/getsubmissions', async (req, res) => {
 
     datas.push(playerPlayedArray);
 
+    // all submission sortable paganation table 
     // remaining days of promotion
     // promotion intervallum
     // one player played how many times? , pie, float
